@@ -120,6 +120,41 @@ def all_courses(media_root):
               f"WHERE slug='{slug}';")
 
 
+def render_og(out_path):
+    """The site-wide Open Graph card (1200x630) used when a page has no image
+    of its own — home, catalog, search, login. Centred lockup: the favicon
+    mark, the wordmark, one tagline, the domain."""
+    ow, oh = 1200, 630
+    img = Image.new('RGB', (ow, oh), BG)
+
+    glow = Image.new('RGB', (ow, oh), BG)
+    gd = ImageDraw.Draw(glow)
+    gd.ellipse([ow // 2 - 420, -360, ow // 2 + 420, 300],
+               fill=tuple(int(b + (a - b) * 0.18) for a, b in zip(ACCENTS['emerald'], BG)))
+    glow = glow.filter(ImageFilter.GaussianBlur(170))
+    img = Image.blend(img, glow, 0.9)
+
+    mark_size = 220
+    mark = Image.open(HERE.parents[2] / 'static' / 'images' / 'favicon.png').convert('RGBA')
+    mark = mark.resize((mark_size, mark_size), Image.LANCZOS)
+    img.paste(mark, ((ow - mark_size) // 2, 88), mark)
+
+    d = ImageDraw.Draw(img)
+    name, nf = 'Ochiq Kurs', bricolage(80, 720)
+    d.text(((ow - d.textlength(name, font=nf)) / 2, 322), name, font=nf, fill=TITLE_COL)
+
+    tag, tf = "O'zbek tilidagi bepul onlayn video kurslar", hanken(36, 500)
+    d.text(((ow - d.textlength(tag, font=tf)) / 2, 428), tag, font=tf, fill=MUTED)
+
+    dom, df, tracking = 'OCHIQKURS.UZ', hanken(26, 700), 6
+    dw = sum(d.textlength(c, font=df) + tracking for c in dom) - tracking
+    draw_tracked(d, ((ow - dw) / 2, 508), dom, df, ACCENTS['emerald'], tracking=tracking)
+
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    img.save(out_path, 'PNG', optimize=True)
+
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--title')
@@ -127,10 +162,13 @@ if __name__ == '__main__':
     ap.add_argument('--color', default='emerald', choices=sorted(ACCENTS))
     ap.add_argument('--out')
     ap.add_argument('--all-courses', metavar='MEDIA_ROOT')
+    ap.add_argument('--og', metavar='OUT', help='render the site-wide OG card')
     args = ap.parse_args()
-    if args.all_courses:
+    if args.og:
+        render_og(args.og)
+    elif args.all_courses:
         all_courses(args.all_courses)
     elif args.title and args.out:
         render(args.out, args.title, args.label, ACCENTS[args.color])
     else:
-        ap.error('need --title/--out, or --all-courses MEDIA_ROOT')
+        ap.error('need --title/--out, --og OUT, or --all-courses MEDIA_ROOT')

@@ -30,10 +30,10 @@ def seo(request):
         'canonical_url': absolute_url(request.path),
         'meta_description': DEFAULT_DESCRIPTION,
         'og_title': DEFAULT_TITLE,
-        'og_image': absolute_url(static('images/course-hero-placeholder.png')),
+        'og_image': absolute_url(static('images/og-default.png')),
         # Fallback used by the template when a view sets an empty og_image
         # (e.g. a course/path with no thumbnail).
-        'default_og_image': absolute_url(static('images/course-hero-placeholder.png')),
+        'default_og_image': absolute_url(static('images/og-default.png')),
         'og_type': 'website',
         'GOOGLE_SITE_VERIFICATION': settings.GOOGLE_SITE_VERIFICATION,
         'CLOUDFLARE_ANALYTICS_TOKEN': settings.CLOUDFLARE_ANALYTICS_TOKEN,

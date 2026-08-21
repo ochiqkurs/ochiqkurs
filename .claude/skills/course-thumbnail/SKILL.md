@@ -20,6 +20,13 @@ python .claude/skills/course-thumbnail/generate.py \
   --out media/course_thumbnails/kurs-slug.png
 ```
 
+The site-wide Open Graph card (`static/images/og-default.png`, 1200x630) —
+what Telegram/Twitter show for pages with no image of their own:
+
+```bash
+python .claude/skills/course-thumbnail/generate.py --og static/images/og-default.png
+```
+
 Regenerate every course from the local DB (prints the `UPDATE` SQL to stdout):
 
 ```bash
@@ -42,5 +49,9 @@ Run with the project venv python (needs Pillow). Fonts ship in `fonts/`
 - For prod: rsync the PNGs to `myserver:~/opencourse/media/course_thumbnails/`
   and run the same UPDATE via `manage.py dbshell`. Never regenerate on prod —
   generate locally, ship files.
+- The OG card (`--og`) is a **static** file committed to `static/images/` — it is
+  not generated at request time. Its tagline is fixed; if the site's positioning
+  changes, re-run `--og` and commit the new PNG. After shipping it, flush the
+  Telegram link cache by sending the URL to [@WebpageBot](https://t.me/WebpageBot).
 - Don't restyle (colors, fonts, layout) without an explicit ask; if the design
   system changes, update this script rather than one-off images.
