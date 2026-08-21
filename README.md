@@ -196,4 +196,4 @@ opencourse/
 
 ## License
 
-Proprietary. All rights reserved.
+MIT — see [LICENSE](LICENSE). Use it, change it, ship it; keep the copyright notice.
