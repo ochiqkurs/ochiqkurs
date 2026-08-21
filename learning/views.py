@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -145,7 +144,12 @@ def _home_jsonld():
             'name': 'Ochiq Kurs',
             'url': absolute_url('/'),
             'logo': absolute_url(static('images/favicon.png')),
-            'sameAs': [f'https://t.me/{settings.TELEGRAM_BOT_USERNAME}'],
+            'sameAs': [
+                'https://t.me/ochiqkurs',
+                'https://www.youtube.com/@ochiqkurs',
+                'https://www.instagram.com/ochiqkurs',
+                'https://github.com/ochiqkurs',
+            ],
         },
     ]
 
