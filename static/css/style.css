@@ -2167,6 +2167,12 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   color: var(--brand-700);
   margin: 6px 0 12px;
 }
+.cert-paper .cert-name-suffix {
+  font-family: var(--font-ui);
+  font-size: 1.04rem; font-weight: 400;
+  color: var(--gray-600);
+  letter-spacing: 0;
+}
 .cert-paper .cert-name::after {
   content: ''; display: block;
   width: 96px; height: 3px; margin: 12px auto 0;
