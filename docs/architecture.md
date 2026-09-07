@@ -14,12 +14,15 @@ opencourse/                          # Repository root (also Django project root
 │   ├── asgi.py
 │   └── wsgi.py
 ├── users/                           # User management app
-│   ├── models.py                    # UserProfile, TelegramAuthToken, TelegramProfile
+│   ├── models.py                    # UserProfile, TelegramAuthToken, TelegramProfile,
+│   │                                #   TelegramContact, CampaignHit, UserAcquisition
 │   ├── views.py                     # Auth, profile, admin panel, YouTube API
+│   ├── middleware.py                # UTMAttributionMiddleware (campaign capture)
 │   ├── urls.py
 │   ├── forms.py
 │   ├── management/commands/
-│   │   └── clear_expired_tokens.py  # Deletes TelegramAuthToken rows past their 10-min TTL
+│   │   ├── clear_expired_tokens.py  # Deletes TelegramAuthToken rows past their 10-min TTL
+│   │   └── utm_report.py            # Campaign funnel: hits → signups → enrolled → certificates
 │   └── migrations/
 ├── learning/                        # Course content app
 │   ├── models.py                    # Course, Module, Lesson, LessonProgress, LessonView, Note,
@@ -136,6 +139,8 @@ Course      (title, slug, subtitle, description, thumbnail, category FK,
 - **UserProfile** — OneToOne with Django User: `current_streak`, `longest_streak`, `last_activity_date`
 - **TelegramAuthToken** — `token`, `short_code` (6-digit, blank for browser-flow tokens), `created_at`, `confirmed_at`, `user` (nullable FK), `is_new_user`; expires after 10 minutes. `generate()` mints a pending browser-flow token (no `short_code`); `issue_for_user(user, is_new_user)` mints a pre-confirmed token **with** a `short_code` for the bot-issued code flow. Rows are deleted on successful code login (one-time use), swept opportunistically (~3% of login renders) and by the `clear_expired_tokens` command.
 - **TelegramProfile** — OneToOne with User: `telegram_id`, `first_name`, `last_name`, `username`, `photo_url`
+- **CampaignHit** — one row per tagged landing, deduped per session: `session_key`, `source`, `medium`, `campaign`, `content`, `term`, `landing_path`, `referrer`, `user` (nullable, backfilled at sign-in), `created_at`
+- **UserAcquisition** — OneToOne with User; first-touch attribution written once at signup: same campaign fields + `landing_path`, `referrer`, `created_at`
 
 ---
 
@@ -360,6 +365,58 @@ URL path segments use Uzbek words where possible: `malaka` (skill/course), `qidi
 - **Anonymous users**: Pro hero with a Telegram-style hero card stack on the right, a pill-search field, and a trust strip of stats.
 - Then: featured learning paths (if any), trust strip, category grid, **Featured** row, "Why us" feature row, **Trending** row, one row per category (top 6 categories × 6 courses each), **Newest** row, testimonials, and a final CTA banner.
 - Global announcements render as amber banners at the top of the page when present.
+
+---
+
+### Campaign Attribution (UTM)
+
+First-party answer to "which link brought this learner?" — Cloudflare counts clicks at the
+edge but can't join a campaign to `User` / `Enrollment` / `Certificate` rows.
+
+- **`users.middleware.UTMAttributionMiddleware`** (registered after `XFrameOptions`, needs
+  session + auth) reads `utm_source/medium/campaign/content/term`, plus the `?ref=<x>`
+  shorthand (→ `source=x`, `medium=referral`) used in channel/bio links.
+- Values are normalized by `clean_utm()`: whitespace-collapsed, lower-cased (so `Instagram`
+  and `instagram` stay one campaign), rejected unless they match `[\w .\-/+:]+`, dropped
+  above 200 chars, truncated to `UTM_MAX` (100). They are attacker-controlled query params.
+- **What is skipped:** non-GET, `/api/`, `/admin/`, `/static/`, `/media/`, and any crawler
+  user-agent (`CRAWLER_RE`) — a bot following a shared campaign link would otherwise inflate
+  every number.
+- **First touch wins.** The first campaign of a session is stored in `session['_utm_attr']`
+  and never overwritten. A `CampaignHit` row is written per *distinct* campaign tuple per
+  session (dedupe via `session['_utm_last']`), not per pageview.
+- **Untagged visits write nothing**, so genuinely direct traffic creates no `django_session`
+  row — the exception is an external `Referer`, which is stored as attribution only
+  (`google.com`/`organic`, other hosts `referral`) so a later signup isn't lost to "direct".
+- **`users.views.attach_acquisition(request, user, is_new_user)`** is called immediately
+  **before** each `login()` (`CheckTokenView`, `_handle_code`, both password handlers) —
+  `login()` cycles the session key, so the pre-login key is what claims this session's hits.
+  It creates `UserAcquisition` only for new users (an existing learner's origin is never
+  rewritten; falls back to `source='direct'`), and always backfills `CampaignHit.user`, which
+  keeps "this campaign brought a returning user back" visible. Best-effort: it can never
+  block a sign-in. The bot endpoints (`/api/auth/confirm/`, `/api/auth/issue-code/`) are
+  untouched — they have no browser session.
+- **Reading it:** Django admin (`/admin/users/campaignhit/`, `/admin/users/useracquisition/`,
+  both read-only with source/medium/campaign filters) for raw rows, and
+  `python manage.py utm_report [--days 30]` for the funnel (hits → signups → enrolled →
+  certificates, per `source/medium/campaign`). Equivalent ad-hoc SQL:
+
+  ```sql
+  SELECT a.source, a.medium, a.campaign,
+         COUNT(*) AS signups,
+         COUNT(DISTINCT e.user_id) AS enrolled
+  FROM users_useracquisition a
+  LEFT JOIN learning_enrollment e ON e.user_id = a.user_id
+  WHERE a.created_at > now() - interval '30 days'
+  GROUP BY 1, 2, 3 ORDER BY signups DESC;
+  ```
+
+- Campaigns pointing straight at the Telegram bot (`t.me/ochiqkurs_bot?start=…`) are **not**
+  covered — that needs a start-payload change in the `opencourse-bot` repo feeding
+  `/api/telemetry/bot-start/`.
+- No redirect strips the parameters: the canonical tag is already query-free
+  (`absolute_url(request.path)`), so tagged links carry no duplicate-content cost.
+- Deploys run `clearsessions` so the anonymous sessions this creates get pruned.
 
 ---
 

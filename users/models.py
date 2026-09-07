@@ -115,3 +115,65 @@ class TelegramContact(models.Model):
 
     def __str__(self):
         return f'TelegramContact({self.telegram_id})'
+
+
+# --- Campaign attribution (UTM) ---------------------------------------------
+# Cloudflare counts clicks at the edge but can't join a campaign to our own
+# rows. These two models keep attribution first-party, so a campaign can be
+# followed all the way to Enrollment / Certificate:
+#   CampaignHit    — one row per tagged landing (deduped per session)
+#   UserAcquisition — first-touch attribution for one user, written once
+UTM_MAX = 100  # per-field cap; anything longer is truncated by _clean_utm
+
+
+class CampaignHit(models.Model):
+    """One row per (session, campaign tuple) — a tagged landing, not a pageview.
+
+    Written by ``users.middleware.UTMAttributionMiddleware``. Deduped in the
+    session, so re-clicking the same link inside one session logs once; a
+    different campaign later in the same session logs a second row.
+    """
+    session_key = models.CharField(max_length=40, db_index=True)
+    source = models.CharField(max_length=UTM_MAX, blank=True, db_index=True)
+    medium = models.CharField(max_length=UTM_MAX, blank=True)
+    campaign = models.CharField(max_length=UTM_MAX, blank=True, db_index=True)
+    content = models.CharField(max_length=UTM_MAX, blank=True)
+    term = models.CharField(max_length=UTM_MAX, blank=True)
+    landing_path = models.CharField(max_length=200, blank=True)
+    referrer = models.CharField(max_length=300, blank=True)
+    # Backfilled when the session's owner logs in or signs up.
+    user = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.SET_NULL, related_name='campaign_hits',
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['campaign', 'created_at'])]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'CampaignHit({self.source}/{self.medium}/{self.campaign})'
+
+
+class UserAcquisition(models.Model):
+    """First-touch attribution for one user. Written once, never overwritten.
+
+    Created for every *new* user at sign-in time — when no campaign is known
+    the source is derived (``direct``, or the referrer host with medium
+    ``organic``), so campaign conversion rates have a meaningful denominator.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='acquisition')
+    source = models.CharField(max_length=UTM_MAX, blank=True, db_index=True)
+    medium = models.CharField(max_length=UTM_MAX, blank=True)
+    campaign = models.CharField(max_length=UTM_MAX, blank=True, db_index=True)
+    content = models.CharField(max_length=UTM_MAX, blank=True)
+    term = models.CharField(max_length=UTM_MAX, blank=True)
+    landing_path = models.CharField(max_length=200, blank=True)
+    referrer = models.CharField(max_length=300, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user.username} ← {self.source}/{self.campaign}'

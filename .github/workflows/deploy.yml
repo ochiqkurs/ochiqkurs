@@ -31,6 +31,8 @@ jobs:
             python manage.py migrate --noinput
             python manage.py createcachetable
             python manage.py clear_expired_tokens
+            # UTM-tagged / referred visitors create anonymous sessions; prune expired ones.
+            python manage.py clearsessions
             python manage.py collectstatic --noinput
             sudo /usr/bin/systemctl restart gunicorn-ochiqkurs
             # Health check: gunicorn must actually answer on its socket after the
