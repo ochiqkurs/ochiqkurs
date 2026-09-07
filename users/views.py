@@ -32,7 +32,11 @@ from learning.forms import CourseForm, ModuleForm, LessonForm
 from .forms import (
     UserProfileForm, SetUsernamePasswordForm, UsernamePasswordLoginForm,
 )
-from .models import TelegramAuthToken, TelegramContact, TelegramProfile, UserProfile
+from .middleware import SESSION_ATTR_KEY
+from .models import (
+    CampaignHit, TelegramAuthToken, TelegramContact, TelegramProfile,
+    UserAcquisition, UserProfile,
+)
 
 
 def _client_ip(request):
@@ -176,6 +180,43 @@ def _get_or_create_telegram_user(telegram_id, first_name, last_name, username, p
     return user, is_new_user
 
 
+def attach_acquisition(request, user, is_new_user):
+    """Copy this session's campaign attribution onto ``user`` (best-effort).
+
+    MUST be called *before* ``login()``: that cycles the session key, and the
+    pre-login key is what this session's ``CampaignHit`` rows carry.
+
+    Only a new user gets a ``UserAcquisition`` row, so an existing learner's
+    origin is never rewritten by a later campaign. Hits are always claimed,
+    which keeps "this campaign brought a returning user back" visible.
+    """
+    try:
+        session_key = request.session.session_key
+        attribution = request.session.get(SESSION_ATTR_KEY) or {}
+
+        if is_new_user and not UserAcquisition.objects.filter(user=user).exists():
+            UserAcquisition.objects.create(
+                user=user,
+                # No campaign and no referrer in the session means the visitor
+                # typed the address or came from an untracked app.
+                source=attribution.get('source') or 'direct',
+                medium=attribution.get('medium', ''),
+                campaign=attribution.get('campaign', ''),
+                content=attribution.get('content', ''),
+                term=attribution.get('term', ''),
+                landing_path=attribution.get('landing_path', ''),
+                referrer=attribution.get('referrer', ''),
+            )
+
+        if session_key:
+            (CampaignHit.objects
+             .filter(session_key=session_key, user__isnull=True)
+             .update(user=user))
+    except Exception:
+        # Attribution must never block a sign-in.
+        pass
+
+
 class TelegramLoginView(View):
     """Login page. Handles three sign-in methods on one page:
       - bot-link auth (browser polls CheckTokenView),
@@ -232,6 +273,7 @@ class TelegramLoginView(View):
         user = auth_token.user
         is_new_user = auth_token.is_new_user
         auth_token.delete()  # one-time use
+        attach_acquisition(request, user, is_new_user)
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return redirect(self._post_login_url(request, is_new_user))
 
@@ -243,6 +285,7 @@ class TelegramLoginView(View):
                 pwd_username=request.POST.get('username', ''),
             ))
         if form.is_valid():
+            attach_acquisition(request, form.cleaned_data['user'], is_new_user=False)
             login(request, form.cleaned_data['user'], backend='django.contrib.auth.backends.ModelBackend')
             return redirect(self._post_login_url(request, is_new_user=False))
         # Surface the form's non-field error inline (bad credentials / passwordless account).
@@ -487,6 +530,7 @@ class CheckTokenView(View):
             return JsonResponse({'status': 'expired'})
 
         if auth_token.confirmed_at and auth_token.user:
+            attach_acquisition(request, auth_token.user, auth_token.is_new_user)
             login(request, auth_token.user, backend='django.contrib.auth.backends.ModelBackend')
             redirect_url = '/users/profile/' if auth_token.is_new_user else settings.LOGIN_REDIRECT_URL
             auth_token.delete()
@@ -680,6 +724,7 @@ class UsernamePasswordLoginView(View):
             form.add_error(None, "Juda ko'p urinish. Bir necha daqiqadan keyin qayta urinib ko'ring.")
             return render(request, self.template_name, {'form': form, 'next': _safe_next(request)})
         if form.is_valid():
+            attach_acquisition(request, form.cleaned_data['user'], is_new_user=False)
             login(request, form.cleaned_data['user'], backend='django.contrib.auth.backends.ModelBackend')
             return redirect(_safe_next(request) or settings.LOGIN_REDIRECT_URL)
         return render(request, self.template_name, {'form': form, 'next': _safe_next(request)})

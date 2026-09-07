@@ -835,3 +835,111 @@ class LessonServiceTests(TestCase):
         self.assertTrue(Enrollment.objects.filter(user=self.user, course=self.course).exists())
         # Only lesson in the course → certificate issues.
         self.assertTrue(Certificate.objects.filter(user=self.user, course=self.course).exists())
+
+
+# ═══════════════════════════════════════════════════════════════
+# Campaign attribution (UTM middleware + first-touch acquisition)
+# ═══════════════════════════════════════════════════════════════
+from users.models import CampaignHit, UserAcquisition
+from users.middleware import SESSION_ATTR_KEY, clean_utm
+
+_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Safari/537.36'
+
+
+@override_settings(**_AUTH_OVERRIDES)
+class UTMTrackingTests(TestCase):
+    def setUp(self):
+        _cache.clear()
+
+    def _visit(self, url='/', ua=_UA, **extra):
+        return self.client.get(url, HTTP_USER_AGENT=ua, **extra)
+
+    def _hits(self):
+        return CampaignHit.objects.order_by('created_at')
+
+    # --- middleware: what gets logged ---
+    def test_tagged_landing_is_logged_once_per_session(self):
+        url = '/?utm_source=telegram&utm_medium=post&utm_campaign=sentabr'
+        self._visit(url)
+        self._visit(url)  # same link clicked again — already attributed
+        self.assertEqual(self._hits().count(), 1)
+        hit = self._hits().first()
+        self.assertEqual((hit.source, hit.medium, hit.campaign), ('telegram', 'post', 'sentabr'))
+        self.assertEqual(hit.landing_path, '/')
+        self.assertIsNone(hit.user)
+
+    def test_second_campaign_logs_a_hit_but_first_touch_stays(self):
+        self._visit('/?utm_source=telegram&utm_medium=post&utm_campaign=sentabr')
+        self._visit('/?utm_source=instagram&utm_medium=bio')
+        self.assertEqual(self._hits().count(), 2)
+        self.assertEqual(self.client.session[SESSION_ATTR_KEY]['source'], 'telegram')
+
+    def test_values_are_lowercased_and_junk_is_dropped(self):
+        self.assertEqual(clean_utm('  Telegram  Kanal '), 'telegram kanal')
+        self.assertEqual(clean_utm('<script>alert(1)</script>'), '')
+        self.assertEqual(clean_utm('x' * 500), '')
+        self._visit('/?utm_source=<script>alert(1)</script>')
+        self.assertEqual(self._hits().count(), 0)
+
+    def test_crawler_is_ignored(self):
+        self._visit('/?utm_source=telegram', ua='Mozilla/5.0 (compatible; GPTBot/1.0)')
+        self.assertEqual(self._hits().count(), 0)
+        self.assertNotIn(SESSION_ATTR_KEY, self.client.session)
+
+    def test_direct_visit_records_nothing(self):
+        self._visit('/')
+        self.assertEqual(self._hits().count(), 0)
+        self.assertNotIn(SESSION_ATTR_KEY, self.client.session)
+
+    def test_ref_shorthand_maps_to_source(self):
+        self._visit('/?ref=telegram_kanal')
+        hit = self._hits().first()
+        self.assertEqual((hit.source, hit.medium), ('telegram_kanal', 'referral'))
+
+    def test_external_referrer_is_remembered_without_a_hit(self):
+        self._visit('/', HTTP_REFERER='https://www.google.com/search?q=ochiq+kurs')
+        self.assertEqual(self._hits().count(), 0)  # only tagged links become hits
+        attribution = self.client.session[SESSION_ATTR_KEY]
+        self.assertEqual((attribution['source'], attribution['medium']), ('google.com', 'organic'))
+
+    def test_own_domain_referrer_is_not_attribution(self):
+        self._visit('/', HTTP_REFERER='http://testserver/malaka/')
+        self.assertNotIn(SESSION_ATTR_KEY, self.client.session)
+
+    # --- sign-in: attribution lands on the user ---
+    def _login_with_code(self, is_new):
+        user = _User.objects.create(username=f'learner-{is_new}')
+        token = TelegramAuthToken.issue_for_user(user, is_new)
+        self.client.post('/users/login/', {'short_code': token.short_code}, HTTP_USER_AGENT=_UA)
+        return user
+
+    def test_new_signup_gets_first_touch_attribution_and_claims_hits(self):
+        self._visit('/?utm_source=telegram&utm_medium=post&utm_campaign=sentabr')
+        user = self._login_with_code(is_new=True)
+        acquisition = UserAcquisition.objects.get(user=user)
+        self.assertEqual(
+            (acquisition.source, acquisition.medium, acquisition.campaign),
+            ('telegram', 'post', 'sentabr'),
+        )
+        # login() cycles the session key — the hit must still be claimed.
+        self.assertEqual(self._hits().first().user_id, user.id)
+
+    def test_returning_user_claims_hits_but_gets_no_acquisition(self):
+        self._visit('/?utm_source=instagram&utm_medium=bio')
+        user = self._login_with_code(is_new=False)
+        self.assertFalse(UserAcquisition.objects.filter(user=user).exists())
+        self.assertEqual(self._hits().first().user_id, user.id)
+
+    def test_untagged_signup_is_recorded_as_direct(self):
+        user = self._login_with_code(is_new=True)
+        self.assertEqual(UserAcquisition.objects.get(user=user).source, 'direct')
+
+    def test_later_campaign_never_overwrites_acquisition(self):
+        self._visit('/?utm_source=telegram&utm_campaign=sentabr')
+        user = self._login_with_code(is_new=True)
+        self.client.logout()
+        self._visit('/?utm_source=instagram&utm_campaign=oktabr')
+        token = TelegramAuthToken.issue_for_user(user, is_new_user=True)
+        self.client.post('/users/login/', {'short_code': token.short_code}, HTTP_USER_AGENT=_UA)
+        self.assertEqual(UserAcquisition.objects.filter(user=user).count(), 1)
+        self.assertEqual(UserAcquisition.objects.get(user=user).source, 'telegram')

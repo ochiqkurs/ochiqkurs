@@ -164,11 +164,12 @@ python manage.py shell                 # Django REPL
 python manage.py fill_durations        # populate lesson durations from YouTube API
 python manage.py createcachetable      # provision the DB cache table (rate limiter)
 python manage.py clear_expired_tokens  # delete TelegramAuthToken rows past their 10-min TTL
+python manage.py utm_report --days 30  # campaign funnel: hits → signups → enrolled → certificates
 python manage.py graph_models -a -g -o models_graph.png  # regenerate models_graph.png (requires DEBUG=True for django_extensions)
 ```
 
 ### Tests
-A focused Django `TestCase` suite lives in `learning/tests.py` (run with `python manage.py test`; ~39 tests). It covers: progress/enrollment integrity (no progress on draft/archived courses, GET stays side-effect free, a play records a view + enrolls but does **not** complete, the manual button completes), multi-select quiz grading (exact-set match) and quiz history (finished attempts only), the Telegram auth flows (`/api/auth/confirm/`, `/api/auth/issue-code/`, code login, the `check` poll), streak logic (`_update_streak` + `live_streak`), certificate auto-issue, and avatar localization (`_localize_avatar`). Auth tests use `override_settings` with a fixed `BOT_SECRET` and an in-memory cache (the prod DB cache table isn't created in the test DB); template-rendering tests swap in the plain static backend (no manifest in tests). UI/visual changes are still verified by rendering pages in a headless browser (both themes), not just unit tests. Add tests here when changing progress, enrollment, certificate, quiz, auth, streak, or avatar logic.
+A focused Django `TestCase` suite lives in `learning/tests.py` (run with `python manage.py test`; ~91 tests). It covers: progress/enrollment integrity (no progress on draft/archived courses, GET stays side-effect free, a play records a view + enrolls but does **not** complete, the manual button completes), multi-select quiz grading (exact-set match) and quiz history (finished attempts only), the Telegram auth flows (`/api/auth/confirm/`, `/api/auth/issue-code/`, code login, the `check` poll), streak logic (`_update_streak` + `live_streak`), certificate auto-issue, avatar localization (`_localize_avatar`), and campaign attribution (UTM middleware capture/dedupe/sanitizing + first-touch `UserAcquisition` at sign-in). Auth tests use `override_settings` with a fixed `BOT_SECRET` and an in-memory cache (the prod DB cache table isn't created in the test DB); template-rendering tests swap in the plain static backend (no manifest in tests). UI/visual changes are still verified by rendering pages in a headless browser (both themes), not just unit tests. Add tests here when changing progress, enrollment, certificate, quiz, auth, streak, avatar, or attribution logic.
 
 ---
 
@@ -177,7 +178,7 @@ A focused Django `TestCase` suite lives in `learning/tests.py` (run with `python
 CI/CD via GitHub Actions (`.github/workflows/deploy.yml`):
 - Triggers on push to `master`
 - SSHes into the production server (`~/opencourse`)
-- Runs (`set -euo pipefail`): `git fetch` → `git reset --hard origin/master` (survives untracked-file collisions, unlike `git pull`) → `pip install` → **`makemigrations --check --dry-run`** (fails the deploy before the DB is touched if a model change shipped without its migration) → `migrate` → `createcachetable` → `clear_expired_tokens` → `collectstatic` → `systemctl restart gunicorn-ochiqkurs` → **post-restart health check** (curls the gunicorn unix socket; a 5xx/connection failure fails the deploy so a broken release doesn't report success)
+- Runs (`set -euo pipefail`): `git fetch` → `git reset --hard origin/master` (survives untracked-file collisions, unlike `git pull`) → `pip install` → **`makemigrations --check --dry-run`** (fails the deploy before the DB is touched if a model change shipped without its migration) → `migrate` → `createcachetable` → `clear_expired_tokens` → `clearsessions` → `collectstatic` → `systemctl restart gunicorn-ochiqkurs` → **post-restart health check** (curls the gunicorn unix socket; a 5xx/connection failure fails the deploy so a broken release doesn't report success)
 - The Cloudflare purge step uses `curl --fail`, so a rejected purge (e.g. bad `CLOUDFLARE_API_TOKEN`) fails loudly instead of passing silently.
 - Then purges the Cloudflare cache
 
@@ -186,6 +187,23 @@ CI/CD via GitHub Actions (`.github/workflows/deploy.yml`):
 Production server: Ubuntu with Gunicorn serving the Django app. WhiteNoise handles static files.
 
 **Do not force-push to `master`** — it triggers deployment.
+
+---
+
+## Campaign Attribution (UTM)
+
+`users/middleware.py` → `UTMAttributionMiddleware` captures `utm_*` params (and a `?ref=<x>`
+shorthand) into the session; `users.views.attach_acquisition()` — called immediately **before**
+every `login()` — writes a first-touch `UserAcquisition` row for new users and backfills
+`CampaignHit.user` for this session's hits. Order matters: `login()` cycles the session key.
+
+Rules that keep the tables honest: values are lower-cased/charset-checked/length-capped
+(`clean_utm`, they're attacker-controlled); crawlers, non-GET and `/api|/admin|/static|/media`
+are skipped; one hit per campaign per session, not per pageview; untagged direct visits write
+nothing at all. First touch is never overwritten by a later campaign. Read it in Django admin
+(read-only) or via `python manage.py utm_report`. Bot-first campaigns (`t.me/…?start=`) are out
+of scope — that needs a change in the `opencourse-bot` repo. Full detail: `docs/architecture.md`
+→ **Campaign Attribution (UTM)**.
 
 ---
 
