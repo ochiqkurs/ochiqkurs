@@ -582,6 +582,11 @@ class SeoTests(TestCase):
         html = resp.content.decode()
         self.assertIn('"@type": "VideoObject"', html)
         self.assertIn('PT12M34S', html)
+        # Google rejects a bare date for uploadDate: it needs a full ISO 8601
+        # datetime with a timezone offset.
+        self.assertRegex(
+            html, r'"uploadDate": "\d{4}-\d{2}-\d{2}T[\d:.]+(Z|[+-]\d{2}:\d{2})"',
+        )
 
     def test_home_has_website_jsonld(self):
         resp = self.client.get(reverse('home'))

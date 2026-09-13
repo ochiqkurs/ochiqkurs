@@ -175,7 +175,7 @@ def _lesson_jsonld(lesson, course):
             'isPartOf': part_of,
         }
         if course.published_at:
-            data['uploadDate'] = course.published_at.date().isoformat()
+            data['uploadDate'] = course.published_at.isoformat()
         duration = _iso_duration(lesson.duration_seconds)
         if duration:
             data['duration'] = duration
@@ -197,7 +197,7 @@ def _lesson_jsonld(lesson, course):
         if course.instructor_name:
             data['author'] = {'@type': 'Person', 'name': course.instructor_name}
         if course.published_at:
-            data['datePublished'] = course.published_at.date().isoformat()
+            data['datePublished'] = course.published_at.isoformat()
         return data
 
     return None
