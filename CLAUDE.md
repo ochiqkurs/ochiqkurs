@@ -148,8 +148,9 @@ All explicit prefixed paths (`qidiruv/`, `sevimlilar/`, `mening-kurslarim/`, `re
 git clone <repo>
 cd opencourse
 cp .env.example .env   # fill in values
-pipenv install
-pipenv shell
+python3.12 -m venv venv                # same venv/ + pip layout as prod
+source venv/bin/activate
+pip install -r requirements-dev.txt    # requirements.txt + django-extensions (DEBUG only)
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver

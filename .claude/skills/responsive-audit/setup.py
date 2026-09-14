@@ -1,5 +1,5 @@
 """Emit sessions + a URL map for the responsive audit. Run via:
-    pipenv run python manage.py shell < setup.py | grep AUDITJSON | sed 's/AUDITJSON//' > audit.json
+    venv/bin/python manage.py shell < setup.py | grep AUDITJSON | sed 's/AUDITJSON//' > audit.json
 
 Does NOT mutate data — it only creates login sessions and reads existing content.
 Pages whose data doesn't exist are omitted (printed to stderr-ish notes).

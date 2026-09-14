@@ -66,7 +66,6 @@
 
 - Python 3.12+
 - PostgreSQL
-- [Pipenv](https://pipenv.pypa.io/)
 - A [Telegram bot](https://core.telegram.org/bots) (for auth)
 
 ### Setup
@@ -75,8 +74,9 @@
 git clone <repo-url>
 cd opencourse
 cp .env.example .env          # fill in required values (see below)
-pipenv install
-pipenv shell
+python3.12 -m venv venv
+source venv/bin/activate
+pip install -r requirements-dev.txt   # prod installs requirements.txt only
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
@@ -181,8 +181,8 @@ opencourse/
 ├── .github/workflows/      # CI/CD
 ├── docs/                   # Architecture reference
 ├── manage.py
-├── requirements.txt
-├── Pipfile
+├── requirements.txt        # Pinned runtime deps (prod)
+├── requirements-dev.txt    # + dev-only deps (django-extensions)
 └── .env.example
 ```
 

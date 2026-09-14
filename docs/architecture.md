@@ -64,8 +64,8 @@ opencourse/                          # Repository root (also Django project root
 ├── .github/workflows/
 │   └── deploy.yml                   # CI/CD: push to master → SSH deploy
 ├── manage.py
-├── requirements.txt
-├── Pipfile
+├── requirements.txt                 # Pinned runtime deps (installed on prod)
+├── requirements-dev.txt             # -r requirements.txt + django-extensions
 ├── .env.example
 └── README.md
 ```
