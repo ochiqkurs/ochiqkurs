@@ -25,13 +25,13 @@ misses theme/overflow/hover tells.
 
 1. **Start the dev server** on a free port:
    ```bash
-   pipenv run python manage.py runserver 127.0.0.1:8009 --noreload &
+   venv/bin/python manage.py runserver 127.0.0.1:8009 --noreload &
    ```
 
 2. **Generate sessions + URL map** (no data is mutated — sessions only):
    ```bash
    mkdir -p /tmp/respaudit && \
-   pipenv run python manage.py shell < .claude/skills/responsive-audit/setup.py \
+   venv/bin/python manage.py shell < .claude/skills/responsive-audit/setup.py \
      | grep AUDITJSON | sed 's/AUDITJSON//' > /tmp/respaudit/audit.json
    ```
    `setup.py` picks representative slugs from existing data (course/module/lesson,
@@ -65,7 +65,7 @@ misses theme/overflow/hover tells.
 5. **Fix**, then re-render with a new label (`node audit.js after`) and compare.
    Iterate until `0 with overflow`.
 
-6. **Verify**: `pipenv run python manage.py test` (CSS/template-only changes
+6. **Verify**: `venv/bin/python manage.py test` (CSS/template-only changes
    should keep all tests green), then stop the server and clean up any fixtures.
 
 ## Debugging a single offender
