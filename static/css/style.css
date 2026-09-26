@@ -1730,6 +1730,7 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 .dashboard-hero .dh-stats { display: flex; gap: 32px; position: relative; }
 .dashboard-hero .dh-stat .num { font-size: 1.6rem; font-weight: 800; line-height: 1; }
 .dashboard-hero .dh-stat .lab { font-size: .78rem; color: rgba(255,255,255,.8); margin-top: 3px; }
+.dashboard-hero .dh-link { color: #fff; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
 @media (max-width: 768px) {
   .dashboard-hero { grid-template-columns: 1fr; padding: 24px; }
   .dashboard-hero .dh-stats { gap: 18px; flex-wrap: wrap; }
@@ -1737,31 +1738,6 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 
 .profile-container { max-width: 1100px; margin: 0 auto; }
 
-.stat-tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-bottom: 28px;
-}
-.stat-tile {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 20px;
-}
-.stat-tile .stat-icon {
-  width: 40px; height: 40px;
-  display: grid; place-items: center;
-  background: var(--brand-50); color: var(--brand-700);
-  border-radius: var(--r-md);
-  margin-bottom: 12px;
-}
-.stat-tile .stat-num {
-  font-family: var(--font-head);
-  font-size: 1.7rem; font-weight: 800; color: var(--text);
-  line-height: 1;
-}
-.stat-tile .stat-lab { font-size: .85rem; color: var(--muted); margin-top: 4px; }
 
 .profile-section {
   background: var(--surface);
@@ -2017,6 +1993,7 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 }
 .login-pwd-form { display: flex; flex-direction: column; gap: 8px; }
 .login-pwd-form .form-input { width: 100%; }
+.login-field-label { font-size: .85rem; font-weight: 600; color: var(--text-soft); margin-top: 4px; }
 .login-pwd-submit { margin-top: 2px; }
 .login-forgot { margin-top: 14px; margin-bottom: 0; }
 .login-form { text-align: left; margin-top: 8px; }

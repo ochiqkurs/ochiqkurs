@@ -47,10 +47,12 @@
       <form method="post" class="login-pwd-form">
         {% csrf_token %}
         {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-        <input type="text" name="username" class="form-input" autocapitalize="none"
-               placeholder="Username" aria-label="Username" value="{{ pwd_username }}" required>
-        <input type="password" name="password" class="form-input"
-               placeholder="Parol" aria-label="Parol" required>
+        <label class="login-field-label" for="login-username">Username</label>
+        <input type="text" id="login-username" name="username" class="form-input" autocapitalize="none"
+               autocomplete="username" placeholder="masalan: ali_valiyev" value="{{ pwd_username }}" required>
+        <label class="login-field-label" for="login-password">Parol</label>
+        <input type="password" id="login-password" name="password" class="form-input"
+               autocomplete="current-password" required>
         <button type="submit" class="btn btn-secondary login-pwd-submit">Kirish</button>
       </form>
       {% if pwd_error %}<p class="form-errors login-code-error">{{ pwd_error }}</p>{% endif %}

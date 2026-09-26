@@ -65,7 +65,7 @@
   document.querySelectorAll('.bm-delete').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var url = btn.dataset.url;
-      if (!confirm("Xatcho'pni o'chirishni xohlaysizmi?")) return;
+      if (!confirm("Bu xatcho'p va unga yozilgan eslatma o'chiriladi. Davom etasizmi?")) return;
       fetch(url, {
         method: 'POST',
         headers: { 'X-CSRFToken': CSRF },
