@@ -68,7 +68,7 @@ function copyVerificationLink() {
   var url = window.location.href;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(url).then(function () {
-      alert('Havola nusxalandi!');
+      alert('Havola nusxalandi');
     }).catch(function () {
       prompt('Havolani nusxalash uchun:', url);
     });

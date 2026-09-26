@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ro'yxatdan o'tish - Ochiq kurs{% endblock %}
+{% block title %}Ro'yxatdan o'tish - Ochiq Kurs{% endblock %}
 
 {% block content %}
 <div class="login-box">
@@ -14,31 +14,12 @@
     Telegram hisobingizga kirmaydi. Faqat shaxsingizni tasdiqlash uchun ishlatiladi.
   </p>
 
-  <div id="tg-status" style="display:none;">
+  <div id="tg-status" class="tg-status" style="display:none;">
     <div class="tg-spinner"></div>
     <p>Telegram botiga o'ting va <strong>Start</strong> tugmasini bosing…</p>
     <p id="tg-error" class="form-errors" style="display:none;"></p>
   </div>
 </div>
-
-<style>
-  .tg-note {
-    font-size: 0.85em;
-    color: #666;
-    margin-top: 0.75rem;
-  }
-  .tg-spinner {
-    width: 28px;
-    height: 28px;
-    border: 3px solid #ccc;
-    border-top-color: #0088cc;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 1rem auto 0.5rem;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #tg-status { text-align: center; margin-top: 1.5rem; }
-</style>
 
 <script>
   (function () {

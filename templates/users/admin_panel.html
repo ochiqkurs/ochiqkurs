@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}Admin Panel - {{ block.super }}{% endblock %}
+{% block title %}Boshqaruv paneli - {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="admin-container">
-    <h1>Admin Panel</h1>
+    <h1>Boshqaruv paneli</h1>
 
     <!-- Tab buttons -->
     <div class="admin-tabs">
-        <button class="tab-btn {% if active_tab == 'course' %}active{% endif %}" data-tab="course">Course</button>
-        <button class="tab-btn {% if active_tab == 'module' %}active{% endif %}" data-tab="module">Module</button>
-        <button class="tab-btn {% if active_tab == 'lesson' %}active{% endif %}" data-tab="lesson">Lesson</button>
+        <button class="tab-btn {% if active_tab == 'course' %}active{% endif %}" data-tab="course">Kurs</button>
+        <button class="tab-btn {% if active_tab == 'module' %}active{% endif %}" data-tab="module">Modul</button>
+        <button class="tab-btn {% if active_tab == 'lesson' %}active{% endif %}" data-tab="lesson">Dars</button>
     </div>
 
     <!-- Course form -->
     <div class="admin-tab-panel {% if active_tab == 'course' %}active{% endif %}" id="tab-course">
-        <h2>Add Course</h2>
+        <h2>Kurs qo'shish</h2>
         <form method="post" enctype="multipart/form-data" class="admin-form">
             {% csrf_token %}
             {% for field in course_form %}
@@ -27,13 +27,13 @@
                 {% endif %}
             </div>
             {% endfor %}
-            <button type="submit" name="add_course" class="btn btn-primary">Add Course</button>
+            <button type="submit" name="add_course" class="btn btn-primary">Kursni qo'shish</button>
         </form>
     </div>
 
     <!-- Module form -->
     <div class="admin-tab-panel {% if active_tab == 'module' %}active{% endif %}" id="tab-module">
-        <h2>Add Module</h2>
+        <h2>Modul qo'shish</h2>
         <form method="post" class="admin-form">
             {% csrf_token %}
             {% for field in module_form %}
@@ -45,13 +45,13 @@
                 {% endif %}
             </div>
             {% endfor %}
-            <button type="submit" name="add_module" class="btn btn-primary">Add Module</button>
+            <button type="submit" name="add_module" class="btn btn-primary">Modulni qo'shish</button>
         </form>
     </div>
 
     <!-- Lesson form -->
     <div class="admin-tab-panel {% if active_tab == 'lesson' %}active{% endif %}" id="tab-lesson">
-        <h2>Add Lesson</h2>
+        <h2>Dars qo'shish</h2>
         <form method="post" class="admin-form">
             {% csrf_token %}
             {% for field in lesson_form %}
@@ -63,12 +63,12 @@
                 {% endif %}
             </div>
             {% endfor %}
-            <button type="submit" name="add_lesson" class="btn btn-primary">Add Lesson</button>
+            <button type="submit" name="add_lesson" class="btn btn-primary">Darsni qo'shish</button>
         </form>
     </div>
 
     <div class="admin-section admin-content-tree">
-        <h2>Existing Content</h2>
+        <h2>Mavjud kontent</h2>
         {% if courses %}
         {% for course in courses %}
         <details>
@@ -88,17 +88,17 @@
                     {% for lesson in module.lessons.all %}
                     <li>{{ lesson.order }}. {{ lesson.title }} <span class="slug-hint">{{ lesson.slug }}</span></li>
                     {% empty %}
-                    <li><em>No lessons yet.</em></li>
+                    <li class="empty-note">Bu modulda dars yo'q.</li>
                     {% endfor %}
                 </ul>
             </details>
             {% empty %}
-            <p class="empty-note">No modules yet.</p>
+            <p class="empty-note">Bu kursda modul yo'q.</p>
             {% endfor %}
         </details>
         {% endfor %}
         {% else %}
-        <p>No content yet.</p>
+        <p>Hali kurs qo'shilmagan.</p>
         {% endif %}
     </div>
 </div>

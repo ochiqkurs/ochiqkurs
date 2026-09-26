@@ -194,7 +194,8 @@ html[data-theme="dark"] {
   text-decoration: none;
   white-space: nowrap;
 }
-.navbar-logo .logo-mark {
+.navbar-logo .logo-mark,
+.footer-brand .logo-mark {
   width: 30px; height: 30px;
   display: inline-grid; place-items: center;
   background: var(--brand-600);
@@ -866,11 +867,10 @@ form p label { font-weight: 600; font-size: .9rem; display: block; margin-bottom
 }
 .course-card-rating .rcount { color: var(--muted); font-weight: 500; }
 .course-card-meta {
-  display: flex; gap: 10px; align-items: center;
+  display: flex; gap: 12px; align-items: center;
   font-size: .77rem; color: var(--muted);
   margin-top: 2px;
 }
-.course-card-meta .dot { width: 3px; height: 3px; background: currentColor; border-radius: 50%; opacity: .5; }
 .course-card-bottom {
   margin-top: auto;
   display: flex; align-items: center; justify-content: space-between;
@@ -1155,15 +1155,15 @@ html[data-theme="dark"] .course-hero {
   border-top: 1px solid var(--border-light);
   padding-top: 14px; margin-top: 14px;
 }
-.enroll-card .ec-share a {
+.enroll-card .ec-share button {
   width: 36px; height: 36px;
   display: grid; place-items: center;
   border-radius: var(--r-full);
   border: 1px solid var(--border);
   color: var(--muted);
-  text-decoration: none;
+  background: none; padding: 0; cursor: pointer;
 }
-.enroll-card .ec-share a:hover { color: var(--brand-700); border-color: var(--brand-500); }
+.enroll-card .ec-share button:hover { color: var(--brand-700); border-color: var(--brand-500); }
 
 @media (max-width: 960px) {
   .enroll-card { position: relative; top: auto; }
@@ -1588,6 +1588,8 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 }
 .lesson-nav .ln-btn.ln-next { text-align: right; align-items: flex-end; }
 .lesson-nav .ln-btn .ln-meta { font-size: .8rem; color: var(--muted); font-weight: 500; }
+.lesson-nav .ln-next .ln-meta { color: rgba(255,255,255,.75); }
+.lesson-nav .ln-next .ln-title { color: #fff; }
 .lesson-nav .ln-btn .ln-title { font-weight: 700; font-size: .95rem; color: var(--text); white-space: normal; overflow-wrap: anywhere; }
 
 /* Notes (now lives inside a tab panel) */
@@ -1943,6 +1945,7 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 }
 .login-box .tg-btn:hover { background: #0077B5; color: #fff; }
 .tg-note { font-size: .85em; color: var(--muted); margin-top: 14px; }
+.tg-status { text-align: center; margin-top: 1.5rem; }
 .tg-spinner {
   width: 28px; height: 28px;
   border: 3px solid var(--border);
@@ -2670,6 +2673,8 @@ html[data-theme="dark"] .cs-list a.active { background: rgba(16,185,129,.15); co
 .ml-title a { color: inherit; text-decoration: none; }
 .ml-title a:hover { color: var(--brand-700); }
 .ml-meta { color: var(--muted); font-size: .82rem; }
+/* Meta facts sit side by side, separated by space, not by '·' characters. */
+.meta-row { display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 2px; }
 .ml-actions { margin-top: auto; padding-top: 4px; }
 .progress-bar-track { height: 6px; background: var(--surface-3); border-radius: var(--r-full); overflow: hidden; }
 .progress-bar-fill { height: 100%; background: var(--brand-500); border-radius: inherit; }
@@ -2801,10 +2806,9 @@ html[data-theme="dark"] .cs-list a.active { background: rgba(16,185,129,.15); co
 }
 .lesson-sub-meta {
   color: var(--muted); font-size: .9rem;
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
   margin-top: 4px;
 }
-.lesson-sub-meta .dot { width: 3px; height: 3px; background: currentColor; opacity: .5; border-radius: 50%; }
 .ltr-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .ld-tabs .tab-count {
   display: inline-block;
@@ -2884,6 +2888,7 @@ html[data-theme="dark"] .qa-ask textarea:focus { box-shadow: 0 0 0 3px rgba(16,1
 .qa-body { color: var(--text-soft); font-size: .94rem; }
 .qa-resolved {
   margin-left: auto;
+  display: inline-flex; align-items: center; gap: 4px;
   font-size: .75rem; font-weight: 700;
   color: var(--brand-700);
   background: var(--brand-50);
@@ -3011,7 +3016,7 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 .quiz-hero h1 { font-size: 1.5rem; margin-bottom: 8px; }
 .quiz-hero-desc { color: var(--text-muted); margin-bottom: 12px; }
 .quiz-hero-meta {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
   font-size: 0.9rem; color: var(--text-muted);
 }
 .quiz-start-btn { margin: 0 auto; display: flex; }
@@ -3157,6 +3162,8 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 }
 .qir-passed .qir-badge { background: var(--success); }
 .qir-failed .qir-badge { background: var(--danger); }
+.qir-passed .qir-icon-fail, .qir-failed .qir-icon-pass { display: none; }
+.qir-badge span { display: flex; }
 .quiz-inline-result h2 { font-size: 1.25rem; margin-bottom: 8px; }
 .qir-score { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; }
 .qir-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -3185,7 +3192,7 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
   border-radius: var(--r-sm); padding: 16px; margin-bottom: 12px;
 }
 .qr-q-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
-.qr-q-icon { font-weight: 700; font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.qr-q-icon { display: flex; flex-shrink: 0; margin-top: 2px; }
 .qr-correct .qr-q-icon { color: var(--success); }
 .qr-wrong .qr-q-icon { color: var(--danger); }
 .qr-q-text { font-weight: 600; line-height: 1.4; min-width: 0; overflow-wrap: anywhere; }
@@ -3203,7 +3210,7 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 .qr-choice-correct { background: var(--ok-bg); border-color: var(--ok-border); color: var(--ok-fg); }
 .qr-choice-selected-wrong { background: var(--bad-bg); border-color: var(--bad-border); color: var(--bad-fg); }
 .qr-choice-selected { background: var(--ok-bg); border-color: var(--ok-border); }
-.qr-correct-mark { margin-left: auto; font-weight: 700; color: var(--ok-fg); font-size: 0.82rem; }
+.qr-correct-mark { margin-left: auto; display: flex; color: var(--ok-fg); }
 .qr-wrong-mark { margin-left: auto; font-weight: 600; color: var(--bad-fg); font-size: 0.78rem; }
 .qr-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
@@ -3259,7 +3266,7 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 .path-card-body { flex: 1; }
 .path-card-body h3 { font-size: 1.05rem; margin-bottom: 8px; }
 .path-card-body p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; }
-.path-card-meta { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); }
+.path-card-meta { display: flex; align-items: center; gap: 14px; font-size: 0.82rem; color: var(--text-muted); }
 .path-card-action { margin-top: 16px; }
 
 /* Path detail */
@@ -3270,7 +3277,7 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 }
 .path-hero h1 { font-size: 1.5rem; }
 .path-hero-desc { color: var(--text-muted); margin-bottom: 12px; }
-.path-hero-meta { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); }
+.path-hero-meta { display: flex; align-items: center; gap: 14px; font-size: 0.9rem; color: var(--text-muted); }
 .path-progress-bar {
   height: 6px; background: var(--surface-2); border-radius: 3px; margin-bottom: 24px; overflow: hidden;
 }
@@ -3288,11 +3295,11 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
   background: var(--surface-2); display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 0.9rem; flex-shrink: 0; color: var(--text-muted);
 }
-.pci-check { color: var(--success); font-size: 1.1rem; }
+.pci-check { display: flex; color: var(--success); }
 .pci-body { flex: 1; }
 .pci-title { font-weight: 600; color: var(--text); text-decoration: none; }
 .pci-title:hover { color: var(--brand-600); }
-.pci-meta { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+.pci-meta { display: flex; align-items: center; gap: 14px; font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
 .pci-bar { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 6px; overflow: hidden; }
 .pci-fill { height: 100%; background: var(--brand-400); border-radius: 2px; transition: width .3s ease; }
 .pci-action { flex-shrink: 0; }

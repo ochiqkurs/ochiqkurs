@@ -24,10 +24,8 @@
     {% if quiz.description %}<p class="quiz-hero-desc">{{ quiz.description }}</p>{% endif %}
     <div class="quiz-hero-meta">
       <span>{{ questions_count }} ta savol</span>
-      <span class="dot"></span>
       <span>O'tish bali: {{ quiz.pass_percent }}%</span>
       {% if quiz.max_attempts > 0 %}
-      <span class="dot"></span>
       <span>Max {{ quiz.max_attempts }} ta urinish</span>
       {% endif %}
     </div>

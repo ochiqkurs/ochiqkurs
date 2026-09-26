@@ -16,8 +16,8 @@
 
 {% if user.is_authenticated and course_total %}
 <div class="course-progress-strip">
-  <div class="cps-info">
-    <strong>{{ course.title }}</strong> ·
+  <div class="cps-info meta-row">
+    <strong>{{ course.title }}</strong>
     <span class="text-muted">{{ course_completed }} / {{ course_total }} dars tugatildi</span>
   </div>
   <div class="cps-bar"><div class="cps-fill" style="width: {{ course_percent }}%"></div></div>
@@ -125,12 +125,12 @@
         </div>
 
         <div class="quiz-inline-result" id="quiz-inline-result" hidden>
-          <div class="qir-badge" id="qir-badge" aria-hidden="true"></div>
+          <div class="qir-badge" aria-hidden="true"><span class="qir-icon-pass">{% lucide 'check' 28 %}</span><span class="qir-icon-fail">{% lucide 'x' 28 %}</span></div>
           <h2 id="qir-title"></h2>
           <div class="qir-score" id="qir-score"></div>
           <div class="qir-actions">
             {% if next_lesson %}
-              <a href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}" class="btn btn-primary">Keyingi dars →</a>
+              <a href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}" class="btn btn-primary">Keyingi dars {% lucide 'arrow-right' 16 %}</a>
             {% else %}
               <a href="{% url 'learning:course_detail' course.slug %}" class="btn btn-primary">Kursga qaytish</a>
             {% endif %}
@@ -148,10 +148,8 @@
         {% if qm.quiz.description %}<p class="quiz-hero-desc">{{ qm.quiz.description }}</p>{% endif %}
         <div class="quiz-hero-meta">
           <span>{{ qm.questions_count }} ta savol</span>
-          <span class="dot"></span>
           <span>O'tish bali: {{ qm.quiz.pass_percent }}%</span>
           {% if qm.quiz.max_attempts > 0 %}
-          <span class="dot"></span>
           <span>Max {{ qm.quiz.max_attempts }} ta urinish</span>
           {% endif %}
         </div>
@@ -231,9 +229,9 @@
       <h1>{{ lesson.title }}</h1>
       <div class="lesson-sub-meta">
         <span>{{ module.title }}</span>
-        <span class="dot"></span><span class="badge">{% if lesson.lesson_type == 'article' %}Maqola{% elif lesson.lesson_type == 'quiz' %}Test{% else %}Video{% endif %}</span>
-        {% if lesson.duration_seconds %}<span class="dot"></span><span>{{ lesson.duration_seconds|lesson_time }}</span>{% endif %}
-        {% if lesson.is_preview %}<span class="dot"></span><span class="badge badge-amber">Tanishtiruv</span>{% endif %}
+        <span class="badge">{% if lesson.lesson_type == 'article' %}Maqola{% elif lesson.lesson_type == 'quiz' %}Test{% else %}Video{% endif %}</span>
+        {% if lesson.duration_seconds %}<span>{{ lesson.duration_seconds|lesson_time }}</span>{% endif %}
+        {% if lesson.is_preview %}<span class="badge badge-amber">Tanishtiruv</span>{% endif %}
       </div>
     </div>
     <div class="ltr-actions">
@@ -407,7 +405,7 @@
                 <div class="qa-author">{{ q.user.first_name|default:q.user.username }}</div>
                 <div class="qa-time">{{ q.created_at|uz_datetime }}</div>
               </div>
-              {% if q.is_resolved %}<span class="qa-resolved">✓ Hal etilgan</span>{% endif %}
+              {% if q.is_resolved %}<span class="qa-resolved">{% lucide 'check' 13 %}Hal etilgan</span>{% endif %}
             </div>
             <div class="qa-title">{{ q.title }}</div>
             {% if q.body %}<div class="qa-body">{{ q.body|linebreaksbr }}</div>{% endif %}
@@ -473,7 +471,7 @@
   <div class="lesson-nav">
     {% if prev_lesson %}
       <a class="btn btn-secondary ln-btn" href="{% url 'learning:lesson_detail' course.slug prev_lesson.module.slug prev_lesson.slug %}">
-        <span class="ln-meta">← Oldingi</span>
+        <span class="ln-meta">Oldingi dars</span>
         <span class="ln-title">{{ prev_lesson.title|truncatechars:50 }}</span>
       </a>
     {% else %}
@@ -481,8 +479,8 @@
     {% endif %}
     {% if next_lesson %}
       <a class="btn btn-primary ln-btn ln-next" href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}">
-        <span class="ln-meta" style="color:rgba(255,255,255,.7)">Keyingi →</span>
-        <span class="ln-title" style="color:#fff">{{ next_lesson.title|truncatechars:50 }}</span>
+        <span class="ln-meta">Keyingi dars</span>
+        <span class="ln-title">{{ next_lesson.title|truncatechars:50 }}</span>
       </a>
     {% endif %}
   </div>
@@ -618,10 +616,9 @@
     var panel = document.getElementById('quiz-inline-result');
     document.getElementById('quiz-take-body').hidden = true;
     panel.classList.add(res.passed ? 'qir-passed' : 'qir-failed');
-    document.getElementById('qir-badge').textContent = res.passed ? '✓' : '✗';
     document.getElementById('qir-title').textContent = res.passed
-      ? 'Tabriklaymiz! Testdan o\'tdingiz.'
-      : 'Afsuski, testdan o\'ta olmadingiz.';
+      ? 'Testdan o\'tdingiz.'
+      : 'Testdan o\'ta olmadingiz.';
     document.getElementById('qir-score').textContent =
       Math.round(res.score) + ' / ' + res.max_score + ' (' + res.percentage + '%)';
     panel.hidden = false;
@@ -675,7 +672,7 @@
         finalResult = data.result;
         mode = 'next';
         btn.disabled = false;
-        btn.textContent = (index >= total - 1) ? 'Natijani ko\'rish' : 'Keyingi savol →';
+        btn.textContent = (index >= total - 1) ? 'Natijani ko\'rish' : 'Keyingi savol';
       })
       .catch(function () {
         statusEl.textContent = 'Xatolik yuz berdi. Qayta urinib ko\'ring.';

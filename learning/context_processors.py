@@ -10,7 +10,7 @@ DEFAULT_DESCRIPTION = (
     "O'zbek tilidagi onlayn kurslar. Dasturlash, dizayn, ish hayoti va "
     "boshqa ko'plab yo'nalishlar bo'yicha bepul video darslar."
 )
-DEFAULT_TITLE = "Ochiq Kurs — O'zbekcha onlayn ta'lim platformasi"
+DEFAULT_TITLE = "Ochiq Kurs - O'zbekcha onlayn ta'lim platformasi"
 
 
 def absolute_url(path):

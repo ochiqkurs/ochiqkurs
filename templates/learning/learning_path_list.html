@@ -6,7 +6,7 @@
 <div class="path-list-page">
   <div class="path-head">
     <h1>Yo'nalishlar</h1>
-    <p>Bir necha kursdan iborat to'plamlar bilan bilimlaringizni chuqurlashtiring. Har bir yo'nalishni oxirigacha tugatib, maxsus sertifikat oling.</p>
+    <p>Har bir yo'nalish bitta kasb uchun kerakli kurslarni o'tish tartibida jamlaydi. Hammasini tugatsangiz, yo'nalish sertifikati beriladi.</p>
   </div>
 
   {% if paths %}
@@ -18,7 +18,6 @@
         <p>{{ p.description|truncatechars:150 }}</p>
         <div class="path-card-meta">
           <span>{{ p.course_count }} ta kurs</span>
-          <span class="dot"></span>
           <span>{{ p.student_count }} ta o'quvchi</span>
         </div>
       </div>

@@ -457,7 +457,7 @@ class CourseListView(View):
                 "dizayn, ma'lumotlar tahlili va boshqa yo'nalishlar. Video darslar, "
                 "konspektlar va testlar bilan."
             ),
-            'og_title': 'Bepul onlayn kurslar — Ochiq Kurs',
+            'og_title': 'Bepul onlayn kurslar - Ochiq Kurs',
         })
 
 
@@ -483,7 +483,7 @@ class CategoryDetailView(View):
                 category.description,
                 f"{category.name} yo'nalishidagi o'zbek tilidagi bepul onlayn kurslar.",
             ),
-            'og_title': f"Bepul {category.name} kurslari — Ochiq Kurs",
+            'og_title': f"Bepul {category.name} kurslari - Ochiq Kurs",
             'jsonld': _breadcrumb_jsonld(
                 ('Bosh sahifa', '/'),
                 ('Kurslar', reverse('learning:course_list')),
@@ -546,7 +546,7 @@ class SearchView(View):
             # Internal search results shouldn't be indexed (crawl waste /
             # thin-content risk); links on the page are still followed.
             'meta_robots': 'noindex, follow',
-            'og_title': 'Qidiruv — Ochiq Kurs',
+            'og_title': 'Qidiruv - Ochiq Kurs',
         })
 
 
@@ -1207,7 +1207,7 @@ def leaderboard_view(request):
             "Ochiq Kurs reytingi — eng faol o'quvchilar: ko'rilgan darslar, "
             "tugatilgan darslar va kunlik streaklar bo'yicha ochiq jadval."
         ),
-        'og_title': 'Reyting — Ochiq Kurs',
+        'og_title': 'Reyting - Ochiq Kurs',
     })
 
 
@@ -1513,7 +1513,7 @@ class LearningPathListView(View):
                 "rejalari. Frontend, Python backend, ma'lumotlar tahlili va AI "
                 "yo'nalishlarini bepul o'rganing."
             ),
-            'og_title': "Yo'nalishlar — Ochiq Kurs",
+            'og_title': "Yo'nalishlar - Ochiq Kurs",
         })
 
 
@@ -1571,7 +1571,7 @@ class LearningPathDetailView(View):
             'path_complete': path_complete,
             'overall_percent': int(completed_courses / total_courses * 100) if total_courses else 0,
             'meta_description': _meta_desc(path_obj.description, path_obj.title),
-            'og_title': f'{path_obj.title} — Ochiq Kurs',
+            'og_title': f'{path_obj.title} - Ochiq Kurs',
             'og_image': absolute_url(path_obj.thumbnail.url) if path_obj.thumbnail else None,
             'jsonld': [
                 {
@@ -1690,9 +1690,9 @@ class InstructorDetailView(View):
             'avg_rating': round(avg_rating, 1),
             'wishlist_ids': _user_wishlist_ids(request.user),
             'meta_description': _meta_desc(
-                bio, f"{display_name} — Ochiq Kursdagi o'qituvchi. {total_courses} ta kurs, {total_lessons} ta dars."
+                bio, f"{display_name}, Ochiq Kursdagi o'qituvchi. {total_courses} ta kurs, {total_lessons} ta dars."
             ),
-            'og_title': f'{display_name} — Ochiq Kurs',
+            'og_title': f'{display_name} - Ochiq Kurs',
             'jsonld': {
                 '@context': 'https://schema.org',
                 '@type': 'Person',
