@@ -27,7 +27,7 @@
         <h2>Assalomu alaykum, {{ user.first_name|default:user.username }}</h2>
         <p class="section-sub">O'rganishni davom ettiring</p>
       </div>
-      <a class="section-link" href="{% url 'learning:my_learning' %}">Barcha kurslarim <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a class="section-link" href="{% url 'learning:my_learning' %}">Barcha kurslarim</a>
     </div>
     <div class="continue-row">
       {% for item in continue_learning %}
@@ -38,7 +38,7 @@
         <div class="ccm-body">
           <h4>{{ item.course.title }}</h4>
           <div class="progress-bar-track"><div class="progress-bar-fill" style="width:{{ item.percent }}%"></div></div>
-          <span class="text-muted" style="font-size:.82rem">{{ item.percent }}% · {{ item.done }}/{{ item.total }} dars</span>
+          <span class="text-muted" style="font-size:.82rem">{{ item.done }} / {{ item.total }} dars tugatilgan</span>
         </div>
       </a>
       {% endfor %}
@@ -80,12 +80,12 @@
   <div class="hero-pro-inner">
     <div class="hero-pro-left">
       <h1 class="hero-pro-title">
-        Zamonaviy kasblarni <span class="accent">o'zbek tilida</span><br>
+        IT kasblarini o'zbek tilida<br>
         bepul o'rganing
       </h1>
       <p class="hero-pro-sub">
-        {{ total_courses }} kurs, {{ total_lessons }} video dars. Dasturlash, dizayn, ma'lumotlar
-        tahlili va boshqa zamonaviy kasblar.
+        {{ total_courses }} kurs, {{ total_lessons }} dars: dasturlash, ma'lumotlar tahlili,
+        dizayn, ofis dasturlari.
       </p>
 
       <form class="hero-search" action="{% url 'learning:search' %}" method="get" role="search">
@@ -103,7 +103,7 @@
 
       <div class="hero-trust-row">
         <div class="trust-stat"><div class="num">{{ total_users }}</div><div class="lab">O'quvchi</div></div>
-        <div class="trust-stat"><div class="num">{{ total_lessons }}</div><div class="lab">Video dars</div></div>
+        <div class="trust-stat"><div class="num">{{ total_lessons }}</div><div class="lab">Dars</div></div>
         <div class="trust-stat"><div class="num">{{ total_hours }}</div><div class="lab">Soat ko'rilgan</div></div>
         <div class="trust-stat"><div class="num">{{ total_courses }}</div><div class="lab">Kurs</div></div>
       </div>
@@ -149,16 +149,13 @@
     <div class="section-head">
       <div>
         <h2>Yo'nalishlar</h2>
-        <p class="section-sub">Bir necha kursdan iborat to'plamlar bilan chuqur o'rganing.</p>
+        <p class="section-sub">Bitta kasb uchun kerakli kurslar, o'tish tartibi bilan.</p>
       </div>
-      <a class="section-link" href="{% url 'learning:learning_path_list' %}">Barchasi <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a class="section-link" href="{% url 'learning:learning_path_list' %}">Barchasi</a>
     </div>
     <div class="card-row">
       {% for path in learning_paths %}
       <a class="path-card" href="{% url 'learning:learning_path_detail' path.slug %}">
-        <div class="path-card-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        </div>
         <h3>{{ path.title }}</h3>
         <p>{{ path.description|truncatechars:100 }}</p>
         <span class="path-meta">{{ path.course_count }} ta kurs</span>
@@ -175,19 +172,19 @@
     <div class="trust-grid">
       <div class="trust-item">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4"/><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/></svg>
-        <span><strong>100% bepul</strong> · Yashirin to'lov yo'q</span>
+        <span>Hamma kurslar bepul, hech qayerda to'lov so'ralmaydi</span>
       </div>
       <div class="trust-item">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-        <span><strong>Sertifikat</strong> · Tugatishingizdanoq</span>
+        <span>Kursni tugatganingizda sertifikat beriladi</span>
       </div>
       <div class="trust-item">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        <span><strong>Savol-javob</strong> · Har bir darsda</span>
+        <span>Har bir dars ostida savol qoldirish mumkin</span>
       </div>
       <div class="trust-item">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span><strong>O'zbek tilida</strong> · Tushuntirish ham, matn ham</span>
+        <span>Videolar ham, konspektlar ham o'zbek tilida</span>
       </div>
     </div>
   </div>
@@ -199,10 +196,9 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <h2>Yo'nalishni tanlang</h2>
-        <p class="section-sub">Sevimli sohangizdagi eng yaxshi kurslarni toping.</p>
+        <h2>Sohalar</h2>
       </div>
-      <a class="section-link" href="{% url 'learning:course_list' %}">Barchasi <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="section-link" href="{% url 'learning:course_list' %}">Barchasi</a>
     </div>
     <div class="category-grid">
       {% for cat in categories %}
@@ -224,9 +220,9 @@
     <div class="section-head">
       <div>
         <h2>Tavsiya etilgan kurslar</h2>
-        <p class="section-sub">Eng yaxshi va eng ko'p tanlangan dasturlar.</p>
+        <p class="section-sub">Jamoamiz boshlashni maslahat beradigan kurslar.</p>
       </div>
-      <a class="section-link" href="{% url 'learning:course_list' %}?saralash=rating">Barchasi <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="section-link" href="{% url 'learning:course_list' %}?saralash=rating">Barchasi</a>
     </div>
     <div class="card-row">
       {% for course in featured %}
@@ -237,48 +233,6 @@
 </section>
 {% endif %}
 
-<!-- ── Why us ───────────────────────────────────────────── -->
-<section class="section section-tight" style="background:var(--bg-soft)">
-  <div class="container">
-    <div class="section-head" style="margin-bottom:24px">
-      <div>
-        <h2>Nima uchun Ochiq Kurs?</h2>
-        <p class="section-sub">Bepul, o'zbek tilida va istalgan vaqtda o'rganing.</p>
-      </div>
-    </div>
-    <div class="feature-row">
-      <div class="feature">
-        <div class="f-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1"/></svg>
-        </div>
-        <h3>O'zbek tilida</h3>
-        <p>Barcha darslar ona tilingizda: videolar, maqolalar, testlar.</p>
-      </div>
-      <div class="feature">
-        <div class="f-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4"/><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/></svg>
-        </div>
-        <h3>Butunlay bepul</h3>
-        <p>Yashirin to'lov yo'q. Ro'yxatdan o'ting va istalgan kursni o'rganishni boshlang.</p>
-      </div>
-      <div class="feature">
-        <div class="f-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-        </div>
-        <h3>Sertifikat</h3>
-        <p>Kursni tugatgach, sertifikatingizni yuklab oling.</p>
-      </div>
-      <div class="feature">
-        <div class="f-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 12v5"/><path d="M11 7v10"/><path d="M15 10v7"/><path d="M19 5v12"/></svg>
-        </div>
-        <h3>Faollik kuzatuvi</h3>
-        <p>Streak, faollik grafigi va statistikalar bilan o'qish odatini mustahkamlang.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ── Trending ─────────────────────────────────────────── -->
 {% if trending %}
 <section class="section">
@@ -286,9 +240,9 @@
     <div class="section-head">
       <div>
         <h2>Eng mashhur</h2>
-        <p class="section-sub">O'quvchilar eng ko'p tanlayotgan kurslar.</p>
+        <p class="section-sub">Eng ko'p o'quvchi yozilgan kurslar.</p>
       </div>
-      <a class="section-link" href="{% url 'learning:course_list' %}?saralash=popular">Barchasi <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="section-link" href="{% url 'learning:course_list' %}?saralash=popular">Barchasi</a>
     </div>
     <div class="card-row">
       {% for course in trending %}
@@ -306,9 +260,9 @@
     <div class="section-head">
       <div>
         <h2>{{ strip.category.name }}</h2>
-        <p class="section-sub">{{ strip.category.description|default:"Ushbu yo'nalishdagi eng yaxshi kurslar." }}</p>
+        {% if strip.category.description %}<p class="section-sub">{{ strip.category.description }}</p>{% endif %}
       </div>
-      <a class="section-link" href="{% url 'learning:category_detail' strip.category.slug %}">Hammasi <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="section-link" href="{% url 'learning:category_detail' strip.category.slug %}">Hammasi</a>
     </div>
     <div class="card-row">
       {% for course in strip.courses %}
@@ -326,9 +280,8 @@
     <div class="section-head">
       <div>
         <h2>Yangi qo'shilgan</h2>
-        <p class="section-sub">Soʻnggi qoʻshilgan kurslar.</p>
       </div>
-      <a class="section-link" href="{% url 'learning:course_list' %}?saralash=new">Barchasi <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="section-link" href="{% url 'learning:course_list' %}?saralash=new">Barchasi</a>
     </div>
     <div class="card-row">
       {% for course in newest %}
@@ -345,8 +298,7 @@
   <div class="container">
     <div class="section-head">
       <div>
-        <h2>O'quvchilarimiz fikri</h2>
-        <p class="section-sub">Ochiq Kurs orqali yangi malakalarga ega bo'lganlar.</p>
+        <h2>O'quvchilar fikri</h2>
       </div>
     </div>
     <div class="testi-grid">
@@ -368,25 +320,22 @@
 </section>
 {% endif %}
 
+{% if not user.is_authenticated %}
 <!-- ── CTA ──────────────────────────────────────────────── -->
 <section class="section">
   <div class="container">
     <div class="cta-banner">
       <div>
-        <h2>Bilim olishni bugundan boshlang</h2>
-        <p>Telegram orqali bir daqiqada ro'yxatdan o'ting va birinchi darsingizni bugun boshlang.</p>
+        <h2>Ro'yxatdan o'tish bir daqiqa oladi</h2>
+        <p>Telegram orqali kirasiz, parol ham, email ham kerak emas. Progress, eslatmalar va sertifikatlar hisobingizda saqlanadi.</p>
       </div>
       <div class="cta-actions">
-        {% if user.is_authenticated %}
-          <a href="{% url 'learning:course_list' %}" class="btn btn-white btn-lg">Kurslarni ko'rish</a>
-          <a href="{% url 'learning:my_learning' %}" class="btn btn-ghost btn-lg" style="color:#fff;border-color:rgba(255,255,255,.4)">Mening kurslarim</a>
-        {% else %}
-          <a href="{% url 'users:signup' %}" class="btn btn-white btn-lg">Boshlash</a>
-          <a href="{% url 'learning:course_list' %}" class="btn btn-ghost btn-lg" style="color:#fff;border-color:rgba(255,255,255,.4)">Kurslarni ko'rish</a>
-        {% endif %}
+        <a href="{% url 'users:signup' %}" class="btn btn-white btn-lg">Ro'yxatdan o'tish</a>
       </div>
     </div>
   </div>
 </section>
+{% endif %}
 
 {% endblock %}
+

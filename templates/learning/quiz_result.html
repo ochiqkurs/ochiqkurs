@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load learning_extras %}
 
 {% block title %}Natija - {{ quiz.title }}{% endblock %}
 
@@ -23,7 +24,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
       {% endif %}
     </div>
-    <h1>{% if attempt.passed %}Tabriklaymiz! Testdan o'tdingiz.{% else %}Afsuski, testdan o'ta olmadingiz.{% endif %}</h1>
+    <h1>{% if attempt.passed %}Testdan o'tdingiz.{% else %}Testdan o'ta olmadingiz.{% endif %}</h1>
     <div class="qr-score">
       <span class="qr-score-num">{{ attempt.score|floatformat:0 }} / {{ attempt.max_score }}</span>
       <span class="qr-score-pct">{{ attempt.percentage }}%</span>
@@ -37,7 +38,7 @@
     <div class="qr-q-item {% if ans.is_correct %}qr-correct{% else %}qr-wrong{% endif %}">
       <div class="qr-q-head">
         <span class="qr-q-icon">
-          {% if ans.is_correct %}✓{% else %}✗{% endif %}
+          {% if ans.is_correct %}{% lucide 'check' 18 %}{% else %}{% lucide 'x' 18 %}{% endif %}
         </span>
         <span class="qr-q-text">{{ ans.question.text }}</span>
       </div>
@@ -51,7 +52,7 @@
           {% if c.id in ans.selected_ids and not ans.is_correct %}qr-choice-selected-wrong{% endif %}
           {% if c.id in ans.selected_ids and ans.is_correct %}qr-choice-selected{% endif %}">
           {{ c.text }}
-          {% if c.is_correct %}<span class="qr-correct-mark">✓</span>{% endif %}
+          {% if c.is_correct %}<span class="qr-correct-mark">{% lucide 'check' 16 %}</span>{% endif %}
           {% if c.id in ans.selected_ids and not c.is_correct %}<span class="qr-wrong-mark">Sizning tanlovingiz</span>{% endif %}
         </div>
         {% endfor %}
@@ -62,7 +63,7 @@
 
   <div class="qr-actions">
     {% if next_lesson %}
-      <a href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}" class="btn btn-primary">Keyingi dars →</a>
+      <a href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}" class="btn btn-primary">Keyingi dars {% lucide 'arrow-right' 16 %}</a>
     {% else %}
       <a href="{% url 'learning:course_detail' course.slug %}" class="btn btn-primary">Kursga qaytish</a>
     {% endif %}

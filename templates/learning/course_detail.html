@@ -76,7 +76,6 @@
             {% if next_lesson %}
               <a href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}" class="btn btn-primary btn-lg btn-block">
                 {% if overall_percent > 0 %}Davom etish ({{ overall_percent }}%){% else %}Boshlash{% endif %}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </a>
               {% if user.is_authenticated and not is_enrolled %}
                 <form action="{% url 'learning:enroll' course.slug %}" method="post" style="margin:0">
@@ -109,7 +108,7 @@
           <ul class="ec-features">
             <li>
               <span class="ec-i"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-              {{ total_lessons }} ta video dars
+              {{ total_lessons }} ta dars
             </li>
             <li>
               <span class="ec-i"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
@@ -117,7 +116,7 @@
             </li>
             <li>
               <span class="ec-i"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-              Cheksiz kirish
+              Muddat cheklovi yo'q
             </li>
             <li>
               <span class="ec-i"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
@@ -125,17 +124,17 @@
             </li>
             <li>
               <span class="ec-i"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-              Eslatma va belgilash imkoniyati
+              Darsga eslatma va video xatcho'plari
             </li>
           </ul>
 
           <div class="ec-share">
-            <a href="#" aria-label="Telegram" onclick="navigator.share?navigator.share({url:location.href,title:'{{ course.title|escapejs }}'}):null;return false;" title="Ulashish">
+            <button type="button" aria-label="Ulashish" title="Ulashish" onclick="navigator.share?navigator.share({url:location.href,title:'{{ course.title|escapejs }}'}):null;">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            </a>
-            <a href="#" onclick="if(navigator.clipboard){navigator.clipboard.writeText(location.href);alert('Havola nusxalandi')}else{prompt('Havolani nusxalash uchun:',location.href)}return false;" title="Havolani nusxalash">
+            </button>
+            <button type="button" aria-label="Havolani nusxalash" title="Havolani nusxalash" onclick="if(navigator.clipboard){navigator.clipboard.writeText(location.href);alert('Havola nusxalandi')}else{prompt('Havolani nusxalash uchun:',location.href)}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -205,8 +204,8 @@
   <section class="tab-panel" data-panel="syllabus" id="syllabus">
     <h2 style="margin-bottom:8px">Kurs dasturi</h2>
     <div class="curriculum-summary">
-      <span>{{ modules_data|length }} modul</span><span>·</span>
-      <span>{{ total_lessons }} dars</span><span>·</span>
+      <span>{{ modules_data|length }} modul</span>
+      <span>{{ total_lessons }} dars</span>
       <span>{{ total_duration|duration }}</span>
     </div>
 
@@ -228,7 +227,7 @@
               </div>
               <span class="module-percent">{{ percent }}%</span>
             </div>
-            <span class="module-duration">{{ item.total_seconds|duration_short }} · {{ item.total }} dars</span>
+            <span class="module-duration meta-row"><span>{{ item.total }} dars</span><span>{{ item.total_seconds|duration_short }}</span></span>
           </div>
         </summary>
 
@@ -290,7 +289,7 @@
         </div>
       </div>
     {% else %}
-      <p class="text-muted">Hozircha sharhlar yo'q. Birinchi bo'ling!</p>
+      <p class="text-muted">Bu kursga hali sharh yozilmagan.</p>
     {% endif %}
 
     {% if user.is_authenticated %}
@@ -328,7 +327,7 @@
               <div class="review-head">
                 <span class="review-name">{{ r.user.first_name|default:r.user.username }}</span>
                 <span class="stars-glyphs">{{ r.rating|stars }}</span>
-                <span class="review-date">· {{ r.created_at|uz_date }}</span>
+                <span class="review-date">{{ r.created_at|uz_date }}</span>
               </div>
               {% if r.comment %}<p class="review-text">{{ r.comment }}</p>{% endif %}
             </div>
@@ -351,10 +350,9 @@
             {{ course.instructor_display }}
             {% endif %}
           </h2>
-          <div class="text-muted">{{ course.category.name|default:"Mutaxassis" }} · Ochiq Kurs jamoasi</div>
         </div>
       </div>
-      <p class="md-content">{{ course.instructor_bio|default:"Tajribali mutaxassis va o'qituvchi. O'z bilimini boshqalar bilan baham ko'rishni yaxshi ko'radi va har bir o'quvchi uchun aniq, tushunarli yo'l-yo'riq taqdim etadi." }}</p>
+      {% if course.instructor_bio %}<p class="md-content">{{ course.instructor_bio }}</p>{% endif %}
     </div>
   </section>
 </div>

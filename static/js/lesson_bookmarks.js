@@ -9,7 +9,7 @@
   var player = null;
   window.__bmSetPlayer = function (p) { player = p; };
 
-  // ── Add bookmark: capture current time ──────────────────
+  // Add bookmark: capture current time
   var addBtn = document.getElementById('bm-add-btn');
   var noteForm = document.getElementById('bm-note-form');
   var noteInput = document.getElementById('bm-note-input');
@@ -61,11 +61,11 @@
     });
   }
 
-  // ── Delete bookmark ─────────────────────────────────────
+  // Delete bookmark
   document.querySelectorAll('.bm-delete').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var url = btn.dataset.url;
-      if (!confirm("Xatcho'pni o'chirishni xohlaysizmi?")) return;
+      if (!confirm("Bu xatcho'p va unga yozilgan eslatma o'chiriladi. Davom etasizmi?")) return;
       fetch(url, {
         method: 'POST',
         headers: { 'X-CSRFToken': CSRF },
@@ -81,18 +81,20 @@
             list.innerHTML = '<li class="bm-empty">Hozircha xatcho\'plar yo\'q.</li>';
           }
         })
-        .catch(function () {});
+        .catch(function () {
+          alert("Xatcho'pni o'chirib bo'lmadi. Sahifani yangilab, qayta urinib ko'ring.");
+        });
     });
   });
 
-  // ── Click bookmark → seek video ─────────────────────────
+  // Click bookmark → seek video
   document.querySelectorAll('.bm-timestamp').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var seconds = parseInt(btn.dataset.seconds, 10);
       if (player && typeof player.seekTo === 'function') {
         player.seekTo(seconds, true);
       }
-      // Switch to video tab
+      // Seeking happens in the player above; drop back to the default Tavsif tab.
       var descBtn = document.querySelector('.ld-tabs button[data-ld="desc"]');
       if (descBtn) descBtn.click();
     });

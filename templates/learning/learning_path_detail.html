@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load learning_extras %}
 
 {% block title %}{{ path_obj.title }} - Ochiq Kurs{% endblock %}
 
@@ -16,7 +17,7 @@
     {% if path_obj.description %}<p class="path-hero-desc">{{ path_obj.description }}</p>{% endif %}
     <div class="path-hero-meta">
       <span>{{ total_courses }} ta kurs</span>
-      {% if is_enrolled %}<span class="dot"></span><span>{{ overall_percent }}% bajarildi</span>{% endif %}
+      {% if is_enrolled %}<span>{{ overall_percent }}% bajarildi</span>{% endif %}
     </div>
 
     {% if user.is_authenticated %}
@@ -47,7 +48,7 @@
     <div class="path-course-item {% if cd.is_complete %}path-course-done{% endif %}">
       <div class="pci-order">
         {% if cd.is_complete %}
-          <span class="pci-check">✓</span>
+          <span class="pci-check">{% lucide 'check' 18 %}</span>
         {% else %}
           <span>{{ cd.order }}</span>
         {% endif %}
@@ -57,7 +58,6 @@
         <div class="pci-meta">
           <span>{{ cd.total_lessons }} ta dars</span>
           {% if is_enrolled %}
-          <span class="dot"></span>
           <span>{{ cd.done_lessons }}/{{ cd.total_lessons }} tugatilgan</span>
           {% endif %}
         </div>

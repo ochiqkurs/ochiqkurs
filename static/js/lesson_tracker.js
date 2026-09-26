@@ -19,7 +19,7 @@
 
   var completeBtn = document.getElementById('btn-complete');
 
-  // ── A view: enroll + streak + activity. NOT completion. ──
+  // A view: enroll + streak + activity. NOT completion.
   function recordView() {
     if (recorded || !IS_AUTH) return;
     recorded = true;
@@ -31,7 +31,7 @@
     }).catch(function () { recorded = false; });
   }
 
-  // ── Completion: video watched to ~90%/end, or the manual button. ──
+  // Completion: video watched to ~90%/end, or the manual button.
   // `reload` is true only for the explicit button click; the auto-complete
   // updates the button in place so it never interrupts playback.
   function markComplete(reload) {
@@ -61,7 +61,6 @@
   function markButtonDone() {
     if (!completeBtn) return;
     completeBtn.textContent = 'Dars tugatildi';
-    completeBtn.classList.add('btn-done');
     completeBtn.disabled = true;
   }
 
@@ -69,13 +68,13 @@
     completeBtn.addEventListener('click', function () { markComplete(true); });
   }
 
-  // ── Article lessons: record a view on load (no player, no auto-complete). ──
+  // Article lessons: record a view on load (no player, no auto-complete).
   if (IS_ARTICLE) {
     if (IS_AUTH) recordView();
     return;
   }
 
-  // ── Poll playback position; auto-complete once past the threshold. ──
+  // Poll playback position; auto-complete once past the threshold.
   function startPoll() {
     if (pollTimer || completed || !IS_AUTH) return;
     pollTimer = setInterval(function () {
@@ -91,7 +90,7 @@
     }, 5000);
   }
 
-  // ── YouTube IFrame API ──────────────────────────────────
+  // YouTube IFrame API
   window.onYouTubeIframeAPIReady = function () {
     player = new YT.Player('yt-player', {
       videoId: VIDEO_ID,
@@ -115,7 +114,7 @@
     if (window.__vpSetPlayer) window.__vpSetPlayer(player);
   };
 
-  // ── Inject the IFrame API script ────────────────────────
+  // Inject the IFrame API script
   if (!window.YT) {
     var tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';

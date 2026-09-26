@@ -35,11 +35,10 @@
             </div>
           </a>
           <div class="ml-body">
-            {% if it.course.category %}<div class="ml-cat">{{ it.course.category.name }}</div>{% endif %}
             <h3 class="ml-title">
               <a href="{% url 'learning:course_detail' it.course.slug %}">{{ it.course.title }}</a>
             </h3>
-            <div class="ml-meta">{{ it.done }} / {{ it.total }} dars · {{ it.course.instructor_display }}</div>
+            <div class="ml-meta meta-row"><span>{{ it.course.instructor_display }}</span><span>{{ it.done }} / {{ it.total }} dars</span></div>
             <div class="progress-bar-track"><div class="progress-bar-fill" style="width: {{ it.percent }}%"></div></div>
             <div class="ml-actions">
               {% if it.percent >= 100 %}
@@ -49,7 +48,7 @@
                 </a>
               {% else %}
                 <a href="{% url 'learning:course_detail' it.course.slug %}" class="btn btn-primary btn-sm">
-                  {% if it.percent > 0 %}Davom etish{% else %}Boshlash{% endif %} →
+                  {% if it.percent > 0 %}Davom etish{% else %}Boshlash{% endif %}
                 </a>
               {% endif %}
             </div>

@@ -22,7 +22,7 @@ class Category(models.Model):
     color = models.CharField(
         max_length=20,
         blank=True,
-        help_text="Tailwind-ish accent color name (emerald, amber, sky, rose, violet, slate)",
+        help_text="Icon tint family: emerald/sky/violet/indigo (brand), amber/rose (accent), slate (neutral)",
     )
     order = models.PositiveIntegerField(default=0)
 
