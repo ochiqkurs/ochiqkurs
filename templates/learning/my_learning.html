@@ -35,7 +35,6 @@
             </div>
           </a>
           <div class="ml-body">
-            {% if it.course.category %}<div class="ml-cat">{{ it.course.category.name }}</div>{% endif %}
             <h3 class="ml-title">
               <a href="{% url 'learning:course_detail' it.course.slug %}">{{ it.course.title }}</a>
             </h3>
