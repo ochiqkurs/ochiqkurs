@@ -76,7 +76,6 @@
             {% if next_lesson %}
               <a href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}" class="btn btn-primary btn-lg btn-block">
                 {% if overall_percent > 0 %}Davom etish ({{ overall_percent }}%){% else %}Boshlash{% endif %}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </a>
               {% if user.is_authenticated and not is_enrolled %}
                 <form action="{% url 'learning:enroll' course.slug %}" method="post" style="margin:0">

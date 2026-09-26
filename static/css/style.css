@@ -1588,8 +1588,8 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 }
 .lesson-nav .ln-btn.ln-next { text-align: right; align-items: flex-end; }
 .lesson-nav .ln-btn .ln-meta { font-size: .8rem; color: var(--muted); font-weight: 500; }
-.lesson-nav .ln-next .ln-meta { color: rgba(255,255,255,.75); }
-.lesson-nav .ln-next .ln-title { color: #fff; }
+.lesson-nav .ln-btn.ln-next .ln-meta { color: rgba(255,255,255,.75); }
+.lesson-nav .ln-btn.ln-next .ln-title { color: #fff; }
 .lesson-nav .ln-btn .ln-title { font-weight: 700; font-size: .95rem; color: var(--text); white-space: normal; overflow-wrap: anywhere; }
 
 /* Notes (now lives inside a tab panel) */
@@ -1728,7 +1728,7 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
 .dashboard-hero .welcome-sub { color: rgba(255,255,255,.85); font-size: .95rem; }
 .dashboard-hero .avatar { box-shadow: 0 0 0 4px rgba(255,255,255,.2); }
 .dashboard-hero .dh-stats { display: flex; gap: 32px; position: relative; }
-.dashboard-hero .dh-stat .num { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+.dashboard-hero .dh-stat .num { font-size: 1.6rem; font-weight: 800; line-height: 1; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 .dashboard-hero .dh-stat .lab { font-size: .78rem; color: rgba(255,255,255,.8); margin-top: 3px; }
 .dashboard-hero .dh-link { color: #fff; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
 @media (max-width: 768px) {
@@ -3154,7 +3154,7 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 }
 .qr-passed { background: var(--ok-bg); border: 1px solid var(--ok-border); }
 .qr-failed { background: var(--bad-bg); border: 1px solid var(--bad-border); }
-.qr-badge { margin-bottom: 16px; }
+.qr-badge { margin-bottom: 16px; display: flex; justify-content: center; }
 .qr-passed .qr-badge { color: var(--ok-fg); }
 .qr-failed .qr-badge { color: var(--bad-fg); }
 .qr-hero h1 { font-size: 1.4rem; margin-bottom: 12px; }

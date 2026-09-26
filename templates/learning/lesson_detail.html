@@ -67,8 +67,7 @@
         </button>
         {% if next_lesson %}
         <a class="btn btn-primary" href="{% url 'learning:lesson_detail' course.slug next_lesson.module.slug next_lesson.slug %}">
-          Keyingi dars
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          Keyingi dars {% lucide 'arrow-right' 16 %}
         </a>
         {% endif %}
       </div>

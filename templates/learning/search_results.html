@@ -36,7 +36,6 @@
             <div style="font-weight:600">{{ lesson.title }}</div>
             <div class="sl-course meta-row"><span>{{ lesson.module.course.title }}</span><span>{{ lesson.module.title }}</span></div>
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
       {% endfor %}
     </div>
@@ -47,7 +46,7 @@
       <div class="es-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       </div>
-      <h3>«{{ q }}» bo'yicha kurs ham, dars ham topilmadi</h3>
+      <h3>Kurs ham, dars ham topilmadi</h3>
       <p>Qisqaroq so'z yoki boshqa atama bilan qidirib ko'ring.</p>
       <a href="{% url 'learning:course_list' %}" class="btn btn-primary">Barcha kurslar</a>
     </div>
