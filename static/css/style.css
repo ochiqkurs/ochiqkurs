@@ -118,7 +118,6 @@ input, textarea, select { font-family: inherit; font-size: 1rem; }
   --shadow-md: 0 4px 8px rgba(16, 24, 40, 0.07), 0 2px 4px rgba(16, 24, 40, 0.04);
   --shadow-lg: 0 10px 20px rgba(16, 24, 40, 0.09), 0 4px 6px rgba(16, 24, 40, 0.05);
   --shadow-xl: 0 24px 48px rgba(16, 24, 40, 0.18);
-  --shadow-lift: 0 14px 32px -8px rgba(16, 185, 129, 0.18), 0 6px 12px -4px rgba(16, 24, 40, 0.10);
 
   --container: 1280px;
   --container-wide: 1440px;
@@ -331,7 +330,6 @@ html[data-theme="dark"] {
 .navbar-btn-primary:hover {
   background: var(--brand-700);
   border-color: var(--brand-700);
-  transform: translateY(-1px);
 }
 
 .navbar-logout-form { margin: 0; display: inline-block; }
@@ -649,16 +647,12 @@ details[open] > .subskill-summary::after { transform: rotate(45deg); }
   background: var(--brand-600);
   color: #fff;
   border-color: var(--brand-600);
-  box-shadow: 0 1px 2px rgba(6, 95, 70, .25);
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--brand-700);
   border-color: var(--brand-700);
   color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px -2px rgba(6, 95, 70, .35);
 }
-.btn-primary:active { transform: translateY(0); }
 .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
 
 .btn-secondary {
@@ -775,10 +769,7 @@ html[data-theme="dark"] .message.info    { background: rgba(59,130,246,.12); bor
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
   padding: 24px;
-  transition: box-shadow var(--t-base), transform var(--t-base), border-color var(--t-base);
 }
-.card-elev { box-shadow: var(--shadow-md); border-color: transparent; }
-.card-hover:hover { box-shadow: var(--shadow-md); }
 
 /* Course card */
 .course-card {
@@ -790,14 +781,10 @@ html[data-theme="dark"] .message.info    { background: rgba(59,130,246,.12); bor
   overflow: hidden;
   text-decoration: none;
   color: var(--text);
-  transition: transform var(--t-base) var(--ease), box-shadow var(--t-base);
+  transition: border-color var(--t-base);
   position: relative;
 }
-.course-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift);
-  border-color: var(--brand-200);
-}
+.course-card:hover { border-color: var(--brand-300); }
 .course-card-thumb {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -808,9 +795,7 @@ html[data-theme="dark"] .message.info    { background: rgba(59,130,246,.12); bor
 .course-card-thumb img {
   width: 100%; height: 100%;
   object-fit: cover;
-  transition: transform .35s var(--ease);
 }
-.course-card:hover .course-card-thumb img { transform: scale(1.04); }
 .course-card-thumb-placeholder {
   width: 100%; height: 100%;
   display: grid; place-items: center;
@@ -941,8 +926,9 @@ html[data-theme="dark"] .message.info    { background: rgba(59,130,246,.12); bor
 .card-grid-3 { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 .home-card-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 
-/* Shared entrance animation (tab panels) */
-@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* Tab panels are opened by a click, so a short fade shows what changed. There
+   are deliberately no load-time entrance animations anywhere else. */
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ── Sections ─────────────────────────────────────────────── */
 .section { padding: 64px 0; }
@@ -1576,9 +1562,8 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   width: 46px; height: 46px; border-radius: 50%;
   border: 4px solid rgba(255, 255, 255, .25);
   border-top-color: var(--brand-400);
-  animation: vp-spin .8s linear infinite;
+  animation: spin .8s linear infinite;
 }
-@keyframes vp-spin { to { transform: rotate(360deg); } }
 .vp.vp-loading .vp-bigplay { opacity: 0; }
 
 .vp:fullscreen { border-radius: 0; }
@@ -1697,7 +1682,7 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   height: 2px; background: var(--brand-600); border-radius: 2px;
 }
 .ld-panel { padding: 20px 0; display: none; }
-.ld-panel.active { display: block; }
+.ld-panel.active { display: block; animation: rise .2s var(--ease-out); }
 
 /* ── Markdown ─────────────────────────────────────────────── */
 .md-content { line-height: 1.65; color: var(--text-soft); }
@@ -1907,9 +1892,9 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   border-radius: var(--r-md);
   padding: 16px;
   gap: 10px;
-  transition: box-shadow var(--t-base), transform var(--t-base);
+  transition: border-color var(--t-base);
 }
-.continue-card:hover { box-shadow: var(--shadow-md); border-color: var(--brand-200); }
+.continue-card:hover { border-color: var(--brand-300); }
 .continue-card .cc-title {
   font-family: var(--font-head);
   font-weight: 700; font-size: 1rem; color: var(--text);
@@ -1944,9 +1929,9 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   position: relative;
   text-decoration: none;
   color: var(--text);
-  transition: transform var(--t-base), box-shadow var(--t-base);
+  transition: border-color var(--t-base);
 }
-.cert-card:hover { box-shadow: var(--shadow-md); }
+.cert-card:hover { border-color: var(--brand-300); }
 .cert-card .cert-medal {
   width: 36px; height: 36px;
   background: var(--brand-600); color: #fff;
@@ -1993,9 +1978,9 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   font-weight: 600;
   font-size: 1rem;
   box-sizing: border-box;
-  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  transition: background var(--t-fast), color var(--t-fast);
 }
-.login-box .tg-btn:hover { background: #0077B5; color: #fff; transform: translateY(-1px); box-shadow: 0 6px 14px -4px rgba(0,136,204,.5); }
+.login-box .tg-btn:hover { background: #0077B5; color: #fff; }
 .tg-note { font-size: .85em; color: var(--muted); margin-top: 14px; }
 .tg-spinner {
   width: 28px; height: 28px;
@@ -2730,9 +2715,9 @@ html[data-theme="dark"] .cs-list a.active { background: rgba(16,185,129,.15); co
   border-radius: var(--r-md);
   overflow: hidden;
   display: flex; flex-direction: column;
-  transition: transform var(--t-base), box-shadow var(--t-base);
+  transition: border-color var(--t-base);
 }
-.ml-card:hover { box-shadow: var(--shadow-md); }
+.ml-card:hover { border-color: var(--brand-300); }
 .ml-thumb {
   position: relative; aspect-ratio: 16/9;
   background: var(--surface-3);
@@ -2914,9 +2899,9 @@ html[data-theme="dark"] .ld-tabs button.active .tab-count { background: rgba(16,
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
-  transition: border-color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  transition: border-color var(--t-fast);
 }
-.resource-item:hover { border-color: var(--brand-300); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.resource-item:hover { border-color: var(--brand-300); }
 .ri-ico {
   width: 40px; height: 40px;
   display: grid; place-items: center;
@@ -3039,47 +3024,6 @@ html[data-theme="dark"] .qa-ask textarea:focus { box-shadow: 0 0 0 3px rgba(16,1
   font-weight: 600;
   color: var(--text-muted);
   font-size: 0.9rem;
-}
-
-/* ── Card animations ──────────────────────────────────────────── */
-.card-grid .course-card {
-  opacity: 0;
-  animation: card-fade-in 0.35s ease forwards;
-}
-.card-grid .course-card:nth-child(1) { animation-delay: 0ms; }
-.card-grid .course-card:nth-child(2) { animation-delay: 40ms; }
-.card-grid .course-card:nth-child(3) { animation-delay: 80ms; }
-.card-grid .course-card:nth-child(4) { animation-delay: 120ms; }
-.card-grid .course-card:nth-child(5) { animation-delay: 160ms; }
-.card-grid .course-card:nth-child(6) { animation-delay: 200ms; }
-.card-grid .course-card:nth-child(7) { animation-delay: 240ms; }
-.card-grid .course-card:nth-child(8) { animation-delay: 280ms; }
-@keyframes card-fade-in {
-  to { opacity: 1; }
-}
-
-/* ── Tab panel transitions ────────────────────────────────────── */
-.ld-panel {
-  display: none;
-  opacity: 0;
-  padding: 20px 0;
-}
-.ld-panel.active {
-  display: block;
-  opacity: 1;
-  padding: 20px 0;
-  animation: panel-slide-in 0.25s ease forwards;
-}
-@keyframes panel-slide-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Content fade-in ──────────────────────────────────────────── */
-.content { animation: content-fade-in 0.3s ease; }
-@keyframes content-fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Form inputs ──────────────────────────────────────────────── */
@@ -3416,9 +3360,9 @@ html[data-theme="dark"] .qa-ask textarea:focus { box-shadow: 0 0 0 3px rgba(16,1
   display: flex; flex-direction: column;
   padding: 24px; background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r-lg); text-decoration: none; color: inherit;
-  transition: box-shadow .2s, transform .2s;
+  transition: border-color var(--t-base);
 }
-.path-card:hover { box-shadow: var(--shadow-lift); }
+.path-card:hover { border-color: var(--brand-300); }
 .path-card-body { flex: 1; }
 .path-card-body h3 { font-size: 1.05rem; margin-bottom: 8px; }
 .path-card-body p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; }
@@ -3501,9 +3445,9 @@ html[data-theme="dark"] .qa-ask textarea:focus { box-shadow: 0 0 0 3px rgba(16,1
   display: flex; gap: 14px; padding: 16px;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r-lg); text-decoration: none; color: inherit;
-  transition: box-shadow .2s, transform .2s;
+  transition: border-color var(--t-base);
 }
-.continue-card-mini:hover { box-shadow: var(--shadow-lift); transform: translateY(-1px); }
+.continue-card-mini:hover { border-color: var(--brand-300); }
 .ccm-thumb-wrap {
   width: 80px; height: 56px; border-radius: 8px; overflow: hidden;
   background: var(--surface-2); flex-shrink: 0;
@@ -3549,3 +3493,12 @@ html[data-theme="dark"] .qq-choice.qq-selected { background: rgba(16,185,129,.14
 html[data-theme="dark"] .qq-explanation { background: rgba(16,185,129,.10); }
 html[data-theme="dark"] .certificate-page { background: var(--bg-soft); }
 
+/* Respect the OS "reduce motion" setting: no transitions, animations or smooth scroll. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
