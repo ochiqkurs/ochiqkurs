@@ -588,7 +588,7 @@ class CourseDetailView(View):
         # side effect of viewing this page (a GET must stay side-effect free).
 
         reviews = list(
-            course.reviews.select_related('user', 'user__telegram_profile')
+            course.reviews.select_related('user')
             .order_by('-created_at')[:20]
         )
 
@@ -803,7 +803,7 @@ class LessonDetailView(View):
         questions = list(
             LessonQuestion.objects
             .filter(lesson=lesson)
-            .select_related('user', 'user__telegram_profile')
+            .select_related('user')
             .prefetch_related('answers__user')
             .order_by('-created_at')[:30]
         )
@@ -1176,7 +1176,7 @@ def leaderboard_view(request):
         .order_by('-views')[:50]
     )
     user_ids = [r['user_id'] for r in rows]
-    users = {u.id: u for u in User.objects.filter(id__in=user_ids).select_related('telegram_profile')}
+    users = {u.id: u for u in User.objects.filter(id__in=user_ids)}
     profiles = {p.user_id: p for p in UserProfile.objects.filter(user_id__in=user_ids)}
     completed_counts = dict(
         LessonProgress.objects.filter(user_id__in=user_ids, is_completed=True)
@@ -1674,7 +1674,6 @@ class InstructorDetailView(View):
         )
         total_courses = len(courses)
         total_lessons = sum(c.lesson_count for c in courses)
-        profile = getattr(instructor, 'telegram_profile', None)
         # The bio lives on the Course model (instructor_bio); surface the first
         # non-empty one. `instructor` is a User, which has no such field.
         bio = next((c.instructor_bio for c in courses if c.instructor_bio), '')
@@ -1682,7 +1681,6 @@ class InstructorDetailView(View):
 
         return render(request, self.template_name, {
             'instructor': instructor,
-            'profile': profile,
             'courses': courses,
             'bio': bio,
             'display_name': display_name,
@@ -1695,7 +1693,6 @@ class InstructorDetailView(View):
                 bio, f"{display_name} — Ochiq Kursdagi o'qituvchi. {total_courses} ta kurs, {total_lessons} ta dars."
             ),
             'og_title': f'{display_name} — Ochiq Kurs',
-            'og_image': profile.photo_url if profile and profile.photo_url else None,
             'jsonld': {
                 '@context': 'https://schema.org',
                 '@type': 'Person',
@@ -1705,8 +1702,6 @@ class InstructorDetailView(View):
                 'jobTitle': "O'qituvchi",
                 'worksFor': {'@type': 'Organization', 'name': 'Ochiq Kurs',
                              'url': absolute_url('/')},
-                **({'image': absolute_url(profile.photo_url)}
-                   if profile and profile.photo_url else {}),
                 **({'description': _meta_desc(bio)} if bio else {}),
             },
         })

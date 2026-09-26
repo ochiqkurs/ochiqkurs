@@ -138,7 +138,7 @@ Course      (title, slug, subtitle, description, thumbnail, category FK,
 
 - **UserProfile** — OneToOne with Django User: `current_streak`, `longest_streak`, `last_activity_date`
 - **TelegramAuthToken** — `token`, `short_code` (6-digit, blank for browser-flow tokens), `created_at`, `confirmed_at`, `user` (nullable FK), `is_new_user`; expires after 10 minutes. `generate()` mints a pending browser-flow token (no `short_code`); `issue_for_user(user, is_new_user)` mints a pre-confirmed token **with** a `short_code` for the bot-issued code flow. Rows are deleted on successful code login (one-time use), swept opportunistically (~3% of login renders) and by the `clear_expired_tokens` command.
-- **TelegramProfile** — OneToOne with User: `telegram_id`, `first_name`, `last_name`, `username`, `photo_url`
+- **TelegramProfile** — OneToOne with User: `telegram_id`, `first_name`, `last_name`, `username` (no profile photo — deliberately not collected)
 - **CampaignHit** — one row per tagged landing, deduped per session: `session_key`, `source`, `medium`, `campaign`, `content`, `term`, `landing_path`, `referrer`, `user` (nullable, backfilled at sign-in), `created_at`
 - **UserAcquisition** — OneToOne with User; first-touch attribution written once at signup: same campaign fields + `landing_path`, `referrer`, `created_at`
 
@@ -310,7 +310,7 @@ URL path segments use Uzbek words where possible: `malaka` (skill/course), `qidi
 - Certificate detail page links to this verification URL.
 
 ### Instructor Profiles
-- Public page at `/malaka/oqituvchi/<username>/` showing instructor's Telegram avatar (or initial), bio, stats (courses, students, lessons, avg rating), and a grid of their published courses.
+- Public page at `/malaka/oqituvchi/<username>/` showing the instructor's initial avatar, bio, stats (courses, students, lessons, avg rating), and a grid of their published courses.
 - Instructor name on course detail page (hero strip + instructor tab) links to the profile.
 - Only works for courses that have `course.instructor` (FK to User) set.
 

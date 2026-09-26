@@ -8,15 +8,7 @@
 
   <!-- Dashboard hero -->
   <div class="dashboard-hero">
-    <span class="avatar avatar-xl">
-      {% with tp=user.telegram_profile %}
-        {% if tp.photo_url %}
-          <img src="{{ tp.photo_url }}" alt="">
-        {% else %}
-          {{ user.first_name|default:user.username|slice:":1"|upper }}
-        {% endif %}
-      {% endwith %}
-    </span>
+    <span class="avatar avatar-xl">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
     <div style="position:relative">
       <h1 class="welcome">Salom, {{ user.first_name|default:user.username }}</h1>
       <p class="welcome-sub">Bilim olishni davom ettiraylik. {% if current_streak %}{{ current_streak }} kunlik streakingiz davom etmoqda.{% else %}Bugun yangi kunni boshlang.{% endif %}</p>

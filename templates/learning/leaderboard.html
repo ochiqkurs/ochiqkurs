@@ -25,7 +25,7 @@
       <div class="podium-col silver">
         <div class="medal">2</div>
         <span class="avatar avatar-lg">
-          {% with tp=second.user.telegram_profile %}{% if tp.photo_url %}<img src="{{ tp.photo_url }}" alt="">{% else %}{{ second.user.first_name|default:second.user.username|slice:":1"|upper }}{% endif %}{% endwith %}
+          {{ second.user.first_name|default:second.user.username|slice:":1"|upper }}
         </span>
         <div class="p-name">{{ second.user.first_name|default:second.user.username }}</div>
         <div class="p-score">{{ second.views }} ta dars</div>
@@ -33,7 +33,7 @@
       <div class="podium-col gold">
         <div class="medal">1</div>
         <span class="avatar avatar-xl">
-          {% with tp=first.user.telegram_profile %}{% if tp.photo_url %}<img src="{{ tp.photo_url }}" alt="">{% else %}{{ first.user.first_name|default:first.user.username|slice:":1"|upper }}{% endif %}{% endwith %}
+          {{ first.user.first_name|default:first.user.username|slice:":1"|upper }}
         </span>
         <div class="p-name">{{ first.user.first_name|default:first.user.username }}</div>
         <div class="p-score">{{ first.views }} ta dars</div>
@@ -41,7 +41,7 @@
       <div class="podium-col bronze">
         <div class="medal">3</div>
         <span class="avatar avatar-lg">
-          {% with tp=third.user.telegram_profile %}{% if tp.photo_url %}<img src="{{ tp.photo_url }}" alt="">{% else %}{{ third.user.first_name|default:third.user.username|slice:":1"|upper }}{% endif %}{% endwith %}
+          {{ third.user.first_name|default:third.user.username|slice:":1"|upper }}
         </span>
         <div class="p-name">{{ third.user.first_name|default:third.user.username }}</div>
         <div class="p-score">{{ third.views }} ta dars</div>
@@ -63,7 +63,7 @@
           <div class="lt-rank">{{ l.rank }}</div>
           <div class="lt-user">
             <span class="avatar avatar-sm">
-              {% with tp=l.user.telegram_profile %}{% if tp.photo_url %}<img src="{{ tp.photo_url }}" alt="">{% else %}{{ l.user.first_name|default:l.user.username|slice:":1"|upper }}{% endif %}{% endwith %}
+              {{ l.user.first_name|default:l.user.username|slice:":1"|upper }}
             </span>
             <span class="lt-name">{{ l.user.first_name|default:l.user.username }}</span>
           </div>

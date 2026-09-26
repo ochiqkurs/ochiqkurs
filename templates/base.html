@@ -68,15 +68,7 @@
           </a>
           <div class="nav-user" id="nav-user">
             <button class="nav-user-trigger" id="nav-user-trigger" aria-haspopup="menu" aria-expanded="false">
-              <span class="avatar">
-                {% with tp=user.telegram_profile %}
-                  {% if tp.photo_url %}
-                    <img src="{{ tp.photo_url }}" alt="{{ user.username }}">
-                  {% else %}
-                    {{ user.first_name|default:user.username|slice:":1"|upper }}
-                  {% endif %}
-                {% endwith %}
-              </span>
+              <span class="avatar">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="nav-user-menu" role="menu">

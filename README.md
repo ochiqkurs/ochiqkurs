@@ -55,7 +55,7 @@
 | Frontend | Django Templates + vanilla JavaScript (IIFE modules) |
 | Markdown | `markdown` + `bleach` (sanitized) |
 | Auth | Django sessions + Telegram bot |
-| Images | Pillow (course thumbnails, avatars) |
+| Images | Pillow (course thumbnails) |
 | Time zone | Asia/Tashkent (UTC+5) |
 
 ---

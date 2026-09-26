@@ -84,7 +84,6 @@ class TelegramProfile(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100, blank=True)
     username = models.CharField(max_length=100, blank=True)
-    photo_url = models.URLField(blank=True)
 
     def __str__(self):
         return f'TelegramProfile({self.telegram_id})'
