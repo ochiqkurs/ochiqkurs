@@ -983,44 +983,37 @@ form p label { font-weight: 600; font-size: .9rem; display: block; margin-bottom
   border-radius: var(--r-lg);
   color: var(--text);
   text-decoration: none;
-  overflow: hidden;
-  transition: transform var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease), border-color var(--t-base) var(--ease);
+  transition: border-color var(--t-base) var(--ease);
 }
-.cat-card::after {
-  content: ''; position: absolute; right: -28px; bottom: -28px;
-  width: 100px; height: 100px;
-  background: var(--brand-100);
-  border-radius: 50%;
-  opacity: .35;
-  transition: transform var(--t-base);
-}
-.cat-card:hover { border-color: var(--brand-300); box-shadow: var(--shadow-md); }
-.cat-card:hover::after { transform: scale(1.4); }
-/* Per-category accent so the cards read as distinct, not identical. The card
-   carries a cat-<color> class (from Category.color); the icon tint derives from
-   one --cat-color var, with a translucent chip that works in light and dark. */
+.cat-card:hover { border-color: var(--brand-300); }
+/* Category.color picks one of three brand families (brand / accent / neutral);
+   the icon is what tells categories apart, not a rainbow of hues. */
 .cat-card { --cat-color: var(--brand-600); }
-.cat-card.cat-emerald { --cat-color: #059669; }
-.cat-card.cat-sky     { --cat-color: #0284C7; }
-.cat-card.cat-violet  { --cat-color: #7C3AED; }
-.cat-card.cat-amber   { --cat-color: #D97706; }
-.cat-card.cat-slate   { --cat-color: #475569; }
-.cat-card.cat-rose    { --cat-color: #E11D48; }
-.cat-card.cat-indigo  { --cat-color: #4F46E5; }
+.cat-card.cat-sky     { --cat-color: var(--brand-700); }
+.cat-card.cat-violet,
+.cat-card.cat-indigo  { --cat-color: var(--brand-800); }
+.cat-card.cat-amber,
+.cat-card.cat-rose    { --cat-color: var(--accent-600); }
+.cat-card.cat-slate   { --cat-color: var(--gray-600); }
+html[data-theme="dark"] .cat-card { --cat-color: var(--brand-400); }
+html[data-theme="dark"] .cat-card.cat-sky { --cat-color: var(--brand-300); }
+html[data-theme="dark"] .cat-card.cat-violet,
+html[data-theme="dark"] .cat-card.cat-indigo { --cat-color: var(--brand-200); }
+html[data-theme="dark"] .cat-card.cat-amber,
+html[data-theme="dark"] .cat-card.cat-rose { --cat-color: var(--accent-400); }
+html[data-theme="dark"] .cat-card.cat-slate { --cat-color: var(--gray-400); }
 .cat-card .c-icon {
   width: 44px; height: 44px;
   background: color-mix(in srgb, var(--cat-color) 14%, transparent);
   color: var(--cat-color);
   border-radius: var(--r-md);
   display: grid; place-items: center;
-  position: relative; z-index: 1;
 }
 .cat-card .c-name {
   font-family: var(--font-head);
   font-weight: 700; font-size: 1rem; line-height: 1.2;
-  position: relative; z-index: 1;
 }
-.cat-card .c-meta { font-size: .8rem; color: var(--muted); position: relative; z-index: 1; }
+.cat-card .c-meta { font-size: .8rem; color: var(--muted); }
 
 .cta-banner {
   background: var(--brand-700);
