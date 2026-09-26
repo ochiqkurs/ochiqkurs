@@ -63,13 +63,13 @@
     else el.removeAttribute('hidden');
   }
 
-  // ── Buffering / loading spinner ─────────────────────────
+  // Buffering / loading spinner
   function setSpinner(on) {
     if (spinner) spinner.hidden = !on;
     shell.classList.toggle('vp-loading', on);
   }
 
-  // ── Progress / time readout ─────────────────────────────
+  // Progress / time readout
   function paint() {
     if (!player || !player.getCurrentTime) return;
     var t = player.getCurrentTime() || 0;
@@ -113,12 +113,12 @@
     ticker = setInterval(paint, 250);
   }
 
-  // ── Idle auto-hide of the control bar ───────────────────
+  // Idle auto-hide of the control bar
   function wake() {
     shell.classList.remove('vp-idle');
     if (idleTimer) clearTimeout(idleTimer);
     if (isPlaying() || moving) {
-      // 3.6s: outlasts YouTube's own awake-chrome fade at play-start, so the
+      // 4s: outlasts YouTube's own awake-chrome fade at play-start, so the
       // two panels don't vanish in a staggered two-step.
       idleTimer = setTimeout(function () { shell.classList.add('vp-idle'); }, 4000);
     }
@@ -127,7 +127,7 @@
   shell.addEventListener('touchstart', wake, { passive: true });
   bar.addEventListener('mousemove', function (e) { e.stopPropagation(); wake(); });
 
-  // ── Play / pause ────────────────────────────────────────
+  // Play / pause
   function paintPlayIcon(playing) {
     setHidden(icPlay, playing);
     setHidden(icPause, !playing);
@@ -173,13 +173,13 @@
   });
   gesture.addEventListener('dblclick', toggleFs);
 
-  // ── Poster (pre-play cover) ─────────────────────────────
+  // Poster (pre-play cover)
   function hidePoster() {
     if (poster) { poster.remove(); poster = null; }
   }
   if (poster) poster.addEventListener('click', play);
 
-  // ── End screen ──────────────────────────────────────────
+  // End screen
   if (replay) {
     replay.addEventListener('click', function () {
       endOv.hidden = true;
@@ -187,7 +187,7 @@
     });
   }
 
-  // ── Seek ────────────────────────────────────────────────
+  // Seek
   seekEl.addEventListener('input', function () {
     dragging = true;
     seekEl.style.setProperty('--vp-progress', (duration ? (seekEl.value / duration * 100) : 0) + '%');
@@ -206,7 +206,7 @@
     wake();
   }
 
-  // ── Volume / mute ───────────────────────────────────────
+  // Volume / mute
   function paintVolume() {
     if (!player || !player.isMuted) return;
     var muted = player.isMuted() || Number(volEl.value) === 0;
@@ -230,7 +230,7 @@
     paintVolume();
   });
 
-  // ── Playback rate ───────────────────────────────────────
+  // Playback rate
   function applyRate(r) {
     if (player && player.setPlaybackRate) player.setPlaybackRate(r);
     rateBtn.textContent = (r % 1 === 0 ? r : r.toFixed(2).replace(/0$/, '')) + '×';
@@ -242,7 +242,7 @@
     applyRate(RATES[(i + 1) % RATES.length]);
   });
 
-  // ── Fullscreen (wrapper-level, so our controls stay) ────
+  // Fullscreen (wrapper-level, so our controls stay)
   function nativeFsEl() {
     return document.fullscreenElement || document.webkitFullscreenElement || null;
   }
@@ -269,7 +269,7 @@
   document.addEventListener('fullscreenchange', paintFs);
   document.addEventListener('webkitfullscreenchange', paintFs);
 
-  // ── Keyboard shortcuts ──────────────────────────────────
+  // Keyboard shortcuts
   document.addEventListener('keydown', function (e) {
     if (!player || e.altKey || e.ctrlKey || e.metaKey) return;
     var t = e.target;
@@ -287,7 +287,7 @@
     else if (key === 'f') { toggleFs(); }
   });
 
-  // ── Wire up the player instance (created by lesson_tracker.js) ──
+  // Wire up the player instance (created by lesson_tracker.js)
   function onReady() {
     ready = true;
     var vol = localStorage.getItem('vp:vol');

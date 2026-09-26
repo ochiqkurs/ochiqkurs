@@ -224,9 +224,7 @@ def _user_wishlist_ids(user):
     return set(Wishlist.objects.filter(user=user).values_list('course_id', flat=True))
 
 
-# ---------------------------------------------------------------------------
 # / (home page — public)
-# ---------------------------------------------------------------------------
 
 def _personalized_home(user, all_courses, published):
     """Authenticated-user home-page sections: in-progress courses to continue,
@@ -397,9 +395,7 @@ class HomeView(View):
         })
 
 
-# ---------------------------------------------------------------------------
 # /malaka/ (all courses — public)
-# ---------------------------------------------------------------------------
 
 class CourseListView(View):
     template_name = 'learning/course_list.html'
@@ -461,9 +457,7 @@ class CourseListView(View):
         })
 
 
-# ---------------------------------------------------------------------------
 # /malaka/kategoriya/<slug>/
-# ---------------------------------------------------------------------------
 
 class CategoryDetailView(View):
     template_name = 'learning/category_detail.html'
@@ -492,9 +486,7 @@ class CategoryDetailView(View):
         })
 
 
-# ---------------------------------------------------------------------------
 # /malaka/qidiruv/?q=...
-# ---------------------------------------------------------------------------
 
 class SearchView(View):
     template_name = 'learning/search_results.html'
@@ -550,9 +542,7 @@ class SearchView(View):
         })
 
 
-# ---------------------------------------------------------------------------
 # /malaka/<course_slug>/
-# ---------------------------------------------------------------------------
 
 class CourseDetailView(View):
     template_name = 'learning/course_detail.html'
@@ -652,9 +642,7 @@ class CourseDetailView(View):
         return render(request, self.template_name, ctx)
 
 
-# ---------------------------------------------------------------------------
 # /malaka/<course_slug>/<module_slug>/
-# ---------------------------------------------------------------------------
 
 class ModuleDetailView(View):
     template_name = 'learning/module_detail.html'
@@ -702,31 +690,35 @@ class ModuleDetailView(View):
         return render(request, self.template_name, ctx)
 
 
-# ---------------------------------------------------------------------------
 # /malaka/<course_slug>/<module_slug>/<lesson_slug>/
-# ---------------------------------------------------------------------------
+
+def _next_lesson(course, module, lesson):
+    """First lesson after `lesson` within its module, else first lesson of the next module."""
+    siblings = list(module.lessons.order_by('order'))
+    idx = next((i for i, l in enumerate(siblings) if l.id == lesson.id), None)
+    if idx is not None and idx < len(siblings) - 1:
+        return siblings[idx + 1]
+    next_module = course.modules.filter(order__gt=module.order).order_by('order').first()
+    if next_module:
+        return next_module.lessons.order_by('order').first()
+    return None
+
+
+def _prev_lesson(course, module, lesson):
+    """Lesson before `lesson` within its module, else last lesson of the previous module."""
+    siblings = list(module.lessons.order_by('order'))
+    idx = next((i for i, l in enumerate(siblings) if l.id == lesson.id), None)
+    if idx:  # None (not found) or 0 (first) both fall through to the previous module
+        return siblings[idx - 1]
+    prev_module = course.modules.filter(order__lt=module.order).order_by('-order').first()
+    if prev_module:
+        return prev_module.lessons.order_by('-order').first()
+    return None
+
 
 def _adjacent_lessons(course, module, lesson):
-    """Return (prev_lesson, next_lesson) for the lesson, crossing module
-    boundaries: falls through to the last lesson of the previous module / the
-    first lesson of the next module when the lesson is at an edge of its own."""
-    sibling_lessons = list(module.lessons.order_by('order'))
-    current_index = next(
-        (i for i, l in enumerate(sibling_lessons) if l.id == lesson.id), None
-    )
-    prev_lesson = sibling_lessons[current_index - 1] if current_index and current_index > 0 else None
-    next_lesson = sibling_lessons[current_index + 1] if current_index is not None and current_index < len(sibling_lessons) - 1 else None
-
-    if not next_lesson:
-        next_module = course.modules.filter(order__gt=module.order).order_by('order').first()
-        if next_module:
-            next_lesson = next_module.lessons.order_by('order').first()
-    if not prev_lesson:
-        prev_module = course.modules.filter(order__lt=module.order).order_by('-order').first()
-        if prev_module:
-            prev_lesson = prev_module.lessons.order_by('-order').first()
-
-    return prev_lesson, next_lesson
+    """(prev_lesson, next_lesson), crossing module boundaries at either edge."""
+    return _prev_lesson(course, module, lesson), _next_lesson(course, module, lesson)
 
 
 def _quiz_context(lesson, user):
@@ -889,9 +881,7 @@ class LessonDetailView(View):
         return render(request, self.template_name, ctx)
 
 
-# ---------------------------------------------------------------------------
 # POST /malaka/<course_slug>/<module_slug>/<lesson_slug>/davom/korildi/
-# ---------------------------------------------------------------------------
 
 @login_required
 def record_view(request, course_slug, module_slug, lesson_slug):
@@ -916,9 +906,7 @@ def record_view(request, course_slug, module_slug, lesson_slug):
     })
 
 
-# ---------------------------------------------------------------------------
 # POST /malaka/<course_slug>/<module_slug>/<lesson_slug>/complete/
-# ---------------------------------------------------------------------------
 
 @login_required
 def mark_lesson_complete(request, course_slug, module_slug, lesson_slug):
@@ -935,9 +923,7 @@ def mark_lesson_complete(request, course_slug, module_slug, lesson_slug):
     })
 
 
-# ---------------------------------------------------------------------------
 # POST /malaka/<course_slug>/<module_slug>/<lesson_slug>/note/
-# ---------------------------------------------------------------------------
 
 @login_required
 def save_note(request, course_slug, module_slug, lesson_slug):
@@ -948,7 +934,7 @@ def save_note(request, course_slug, module_slug, lesson_slug):
 
     try:
         content = json.loads(request.body).get('content', '')
-    except (json.JSONDecodeError, ValueError):
+    except ValueError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     Note.objects.update_or_create(
@@ -960,9 +946,7 @@ def save_note(request, course_slug, module_slug, lesson_slug):
     return JsonResponse({'status': 'ok', 'rendered': rendered})
 
 
-# ---------------------------------------------------------------------------
 # POST /malaka/<course_slug>/yozilish/
-# ---------------------------------------------------------------------------
 
 @login_required
 def enroll_course(request, course_slug):
@@ -974,9 +958,7 @@ def enroll_course(request, course_slug):
     return redirect('learning:course_detail', course_slug=course.slug)
 
 
-# ---------------------------------------------------------------------------
 # POST /malaka/<course_slug>/sharh/
-# ---------------------------------------------------------------------------
 
 @login_required
 def submit_review(request, course_slug):
@@ -997,9 +979,7 @@ def submit_review(request, course_slug):
     return redirect('learning:course_detail', course_slug=course.slug)
 
 
-# ---------------------------------------------------------------------------
 # GET /malaka/<course_slug>/sertifikat/
-# ---------------------------------------------------------------------------
 
 @login_required
 def certificate_view(request, course_slug):
@@ -1033,21 +1013,7 @@ def _get_lesson(course_slug, module_slug, lesson_slug, user=None):
     return get_object_or_404(Lesson, slug=lesson_slug, module=module)
 
 
-def _next_lesson(course, module, lesson):
-    """First lesson after `lesson` within its module, else first lesson of the next module."""
-    siblings = list(module.lessons.order_by('order'))
-    idx = next((i for i, l in enumerate(siblings) if l.id == lesson.id), None)
-    if idx is not None and idx < len(siblings) - 1:
-        return siblings[idx + 1]
-    next_module = course.modules.filter(order__gt=module.order).order_by('order').first()
-    if next_module:
-        return next_module.lessons.order_by('order').first()
-    return None
-
-
-# ---------------------------------------------------------------------------
 # Wishlist
-# ---------------------------------------------------------------------------
 
 @login_required
 def toggle_wishlist(request, course_slug):
@@ -1088,9 +1054,7 @@ def wishlist_view(request):
     })
 
 
-# ---------------------------------------------------------------------------
 # My Learning (enrolled courses + progress)
-# ---------------------------------------------------------------------------
 
 @login_required
 def my_learning(request):
@@ -1151,9 +1115,7 @@ def my_learning(request):
     })
 
 
-# ---------------------------------------------------------------------------
 # Leaderboard
-# ---------------------------------------------------------------------------
 
 def leaderboard_view(request):
     from users.models import UserProfile
@@ -1211,9 +1173,7 @@ def leaderboard_view(request):
     })
 
 
-# ---------------------------------------------------------------------------
 # Q&A on lessons
-# ---------------------------------------------------------------------------
 
 @login_required
 def ask_question(request, course_slug, module_slug, lesson_slug):
@@ -1252,9 +1212,7 @@ def post_answer(request, course_slug, module_slug, lesson_slug, question_id):
     )
 
 
-# ---------------------------------------------------------------------------
 # Video Bookmarks
-# ---------------------------------------------------------------------------
 
 @login_required
 def save_bookmark(request, course_slug, module_slug, lesson_slug):
@@ -1263,7 +1221,7 @@ def save_bookmark(request, course_slug, module_slug, lesson_slug):
     lesson = _get_lesson(course_slug, module_slug, lesson_slug, request.user)
     try:
         data = json.loads(request.body)
-    except (json.JSONDecodeError, ValueError):
+    except ValueError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     try:
         timestamp = int(data.get('timestamp', 0))
@@ -1293,9 +1251,7 @@ def delete_bookmark(request, course_slug, module_slug, lesson_slug, bookmark_id)
     return JsonResponse({'status': 'ok'})
 
 
-# ---------------------------------------------------------------------------
 # Quiz System
-# ---------------------------------------------------------------------------
 
 def quiz_detail(request, course_slug, module_slug, lesson_slug, quiz_id):
     lesson = _get_lesson(course_slug, module_slug, lesson_slug, request.user)
@@ -1389,7 +1345,7 @@ def check_quiz_answer(request, course_slug, module_slug, lesson_slug, quiz_id, a
         return JsonResponse({'error': 'Attempt already completed'}, status=400)
     try:
         data = json.loads(request.body)
-    except (json.JSONDecodeError, ValueError):
+    except ValueError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     try:
         question = quiz.questions.get(id=int(data.get('question_id')))
@@ -1485,9 +1441,7 @@ def quiz_result(request, course_slug, module_slug, lesson_slug, quiz_id, attempt
     })
 
 
-# ---------------------------------------------------------------------------
 # Learning Paths
-# ---------------------------------------------------------------------------
 
 class LearningPathListView(View):
     template_name = 'learning/learning_path_list.html'
@@ -1637,9 +1591,7 @@ def learning_path_certificate(request, path_slug):
     })
 
 
-# ---------------------------------------------------------------------------
 # Public Certificate Verification
-# ---------------------------------------------------------------------------
 
 def public_certificate_verify(request, code):
     cert = get_object_or_404(Certificate, code=code)
@@ -1651,9 +1603,7 @@ def public_certificate_verify(request, code):
     })
 
 
-# ---------------------------------------------------------------------------
 # Instructor Profile
-# ---------------------------------------------------------------------------
 
 class InstructorDetailView(View):
     template_name = 'learning/instructor_detail.html'
@@ -1707,9 +1657,7 @@ class InstructorDetailView(View):
         })
 
 
-# ---------------------------------------------------------------------------
 # /llms.txt — GEO: a Markdown map of the site for AI assistants/crawlers
-# ---------------------------------------------------------------------------
 
 @cache_page(3600)
 def llms_txt(request):

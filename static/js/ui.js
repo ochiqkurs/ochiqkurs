@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  // ── Theme toggle ─────────────────────────────────────────
+  // Theme toggle
   var btn = document.getElementById('theme-toggle');
   var iconLight = btn && btn.querySelector('.theme-icon-light');
   var iconDark = btn && btn.querySelector('.theme-icon-dark');
@@ -28,7 +28,7 @@
     });
   }
 
-  // ── User dropdown ────────────────────────────────────────
+  // User dropdown
   var userWrap = document.getElementById('nav-user');
   var userTrigger = document.getElementById('nav-user-trigger');
   if (userWrap && userTrigger) {
@@ -51,7 +51,7 @@
     });
   }
 
-  // ── Mobile drawer ────────────────────────────────────────
+  // Mobile drawer
   var mobileBtn = document.getElementById('mobile-toggle');
   var drawer = document.getElementById('mobile-drawer');
   if (mobileBtn && drawer) {

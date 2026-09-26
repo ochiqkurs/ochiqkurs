@@ -12,6 +12,7 @@ from django.urls import reverse
 from .models import (
     Course, Module, Lesson, Enrollment, LessonProgress, LessonView, Certificate,
 )
+from .views import _adjacent_lessons
 
 
 # The production manifest static storage needs a collectstatic manifest, which the
@@ -184,6 +185,11 @@ class TelegramConfirmTests(TestCase):
 
     def test_bad_secret_is_forbidden(self):
         self.assertEqual(self._post({'token': 'x', 'telegram_id': 1}, secret='wrong').status_code, 403)
+
+    def test_malformed_json_is_rejected(self):
+        resp = self.client.post(self.URL, data='{not json', content_type='application/json',
+                                HTTP_X_BOT_SECRET='test-bot-secret')
+        self.assertEqual(resp.status_code, 400)
 
     def test_confirm_creates_new_user_and_profile(self):
         token = TelegramAuthToken.generate()
@@ -897,3 +903,20 @@ class UTMTrackingTests(TestCase):
         self.client.post('/users/login/', {'short_code': token.short_code}, HTTP_USER_AGENT=_UA)
         self.assertEqual(UserAcquisition.objects.filter(user=user).count(), 1)
         self.assertEqual(UserAcquisition.objects.get(user=user).source, 'telegram')
+
+
+class AdjacentLessonTests(TestCase):
+    """Prev/next navigation crosses module boundaries in both directions."""
+
+    def setUp(self):
+        self.course = Course.objects.create(title='C', slug='c-adj', status='published')
+        self.m1 = Module.objects.create(title='M1', slug='m1', course=self.course, order=0)
+        self.m2 = Module.objects.create(title='M2', slug='m2', course=self.course, order=1)
+        self.a = Lesson.objects.create(title='A', slug='a', module=self.m1, order=0)
+        self.b = Lesson.objects.create(title='B', slug='b', module=self.m1, order=1)
+        self.c = Lesson.objects.create(title='C', slug='c', module=self.m2, order=0)
+
+    def test_edges_cross_modules(self):
+        self.assertEqual(_adjacent_lessons(self.course, self.m1, self.a), (None, self.b))
+        self.assertEqual(_adjacent_lessons(self.course, self.m1, self.b), (self.a, self.c))
+        self.assertEqual(_adjacent_lessons(self.course, self.m2, self.c), (self.b, None))

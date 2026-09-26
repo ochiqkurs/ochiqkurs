@@ -135,7 +135,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
     search_fields = ['title', 'body']
 
 
-# ── Quiz Models ──
+# Quiz Models
 
 class QuizQuestionInline(admin.TabularInline):
     model = QuizQuestion
@@ -186,7 +186,7 @@ class QuizAnswerAdmin(admin.ModelAdmin):
     list_display = ['attempt', 'question', 'is_correct']
 
 
-# ── Learning Path Models ──
+# Learning Path Models
 
 @admin.register(LearningPath)
 class LearningPathAdmin(admin.ModelAdmin):
@@ -209,7 +209,7 @@ class LearningPathCertificateAdmin(admin.ModelAdmin):
     list_display = ['code', 'user', 'path', 'issued_at']
 
 
-# ── Video Bookmark ──
+# Video Bookmark
 
 @admin.register(VideoBookmark)
 class VideoBookmarkAdmin(admin.ModelAdmin):

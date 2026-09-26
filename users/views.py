@@ -279,19 +279,28 @@ class SignupView(TelegramLoginView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class TelegramConfirmView(View):
-    """Called by the Telegram bot after user presses Start (bot-link flow)."""
+class BotView(View):
+    """Base for the endpoints the Telegram bot calls. Rejects requests without
+    the shared X-Bot-Secret header (CSRF doesn't apply: the bot has no session)
+    and parses a POST body into `self.data`."""
 
-    def post(self, request):
+    def dispatch(self, request, *args, **kwargs):
         secret = request.headers.get('X-Bot-Secret', '')
         if not hmac.compare_digest(secret, settings.BOT_SECRET):
             return JsonResponse({'error': 'Forbidden'}, status=403)
+        if request.method == 'POST':
+            try:
+                self.data = json.loads(request.body)
+            except ValueError:  # JSONDecodeError subclasses ValueError
+                return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        return super().dispatch(request, *args, **kwargs)
 
-        try:
-            data = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
+class TelegramConfirmView(BotView):
+    """Called by the Telegram bot after user presses Start (bot-link flow)."""
+
+    def post(self, request):
+        data = self.data
         token_str = data.get('token', '').strip()
         telegram_id = data.get('telegram_id')
         first_name = data.get('first_name', '').strip()
@@ -321,8 +330,7 @@ class TelegramConfirmView(View):
         return JsonResponse({'status': 'ok'})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class IssueCodeView(View):
+class IssueCodeView(BotView):
     """Called by the Telegram bot when a user requests a login code.
 
     The bot has already authenticated the Telegram identity, so the server
@@ -333,15 +341,7 @@ class IssueCodeView(View):
     """
 
     def post(self, request):
-        secret = request.headers.get('X-Bot-Secret', '')
-        if not hmac.compare_digest(secret, settings.BOT_SECRET):
-            return JsonResponse({'error': 'Forbidden'}, status=403)
-
-        try:
-            data = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
+        data = self.data
         telegram_id = data.get('telegram_id')
         first_name = data.get('first_name', '').strip()
         last_name = data.get('last_name', '').strip()
@@ -362,8 +362,7 @@ class IssueCodeView(View):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class BotStartView(View):
+class BotStartView(BotView):
     """Records anyone who presses /start on the bot, even without logging in.
 
     Fire-and-forget telemetry from the bot (best-effort; the bot never blocks
@@ -373,15 +372,7 @@ class BotStartView(View):
     """
 
     def post(self, request):
-        secret = request.headers.get('X-Bot-Secret', '')
-        if not hmac.compare_digest(secret, settings.BOT_SECRET):
-            return JsonResponse({'error': 'Forbidden'}, status=403)
-
-        try:
-            data = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
+        data = self.data
         telegram_id = data.get('telegram_id')
         if not telegram_id:
             return JsonResponse({'error': 'telegram_id is required'}, status=400)
@@ -405,18 +396,13 @@ class BotStartView(View):
         return JsonResponse({'status': 'ok'})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class ContactsListView(View):
+class ContactsListView(BotView):
     """Returns the broadcast list (non-blocked contacts that have a chat_id).
 
     Consumed by the bot's broadcast script. Gated by X-Bot-Secret. Read-only.
     """
 
     def get(self, request):
-        secret = request.headers.get('X-Bot-Secret', '')
-        if not hmac.compare_digest(secret, settings.BOT_SECRET):
-            return JsonResponse({'error': 'Forbidden'}, status=403)
-
         contacts = list(
             TelegramContact.objects
             .filter(blocked=False, chat_id__isnull=False)
@@ -425,8 +411,7 @@ class ContactsListView(View):
         return JsonResponse({'count': len(contacts), 'contacts': contacts})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class MarkBlockedView(View):
+class MarkBlockedView(BotView):
     """Marks contacts (by telegram_id) as blocked so future broadcasts skip them.
 
     Called by the broadcast script for users who have blocked the bot. Gated by
@@ -434,15 +419,7 @@ class MarkBlockedView(View):
     """
 
     def post(self, request):
-        secret = request.headers.get('X-Bot-Secret', '')
-        if not hmac.compare_digest(secret, settings.BOT_SECRET):
-            return JsonResponse({'error': 'Forbidden'}, status=403)
-
-        try:
-            data = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
+        data = self.data
         telegram_ids = data.get('telegram_ids') or []
         if not isinstance(telegram_ids, list):
             return JsonResponse({'error': 'telegram_ids must be a list'}, status=400)

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  // ── Note edit/preview toggle ─────────────────────────────────────────
+  // Note edit/preview toggle
   var btnEdit = document.getElementById('btn-edit-note');
   var noteEditor = document.getElementById('note-editor');
   var notePreview = document.getElementById('note-preview');
@@ -14,7 +14,7 @@
     });
   }
 
-  // ── Save note ────────────────────────────────────────────────────────
+  // Save note
   var btnNote = document.getElementById('btn-save-note');
   var noteStatus = document.getElementById('note-status');
   if (btnNote) {

@@ -59,7 +59,7 @@
   }
 
   function fetchSuggest(q) {
-    if (lastFetch && lastFetch.abort) try { lastFetch.abort(); } catch (e) {}
+    if (lastFetch) lastFetch.abort();
     var ctrl = new AbortController();
     lastFetch = ctrl;
     fetch(url + '?q=' + encodeURIComponent(q) + '&format=json', { signal: ctrl.signal })

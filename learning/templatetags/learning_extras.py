@@ -166,7 +166,7 @@ def uz_datetime(value):
     return out
 
 
-# ── Inline Lucide icons ──────────────────────────────────────────
+# Inline Lucide icons
 # Curated set of Lucide icon paths so templates can render an icon by name
 # (e.g. a Category's `icon` field, or replacing emoji used as icons). Keeps the
 # "inline SVG, no sprite/font" convention. Unknown names fall back to book-open.
