@@ -231,7 +231,7 @@
       <h1>{{ lesson.title }}</h1>
       <div class="lesson-sub-meta">
         <span>{{ module.title }}</span>
-        <span class="dot"></span><span class="badge badge-soft">{% if lesson.lesson_type == 'article' %}Maqola{% elif lesson.lesson_type == 'quiz' %}Test{% else %}Video{% endif %}</span>
+        <span class="dot"></span><span class="badge">{% if lesson.lesson_type == 'article' %}Maqola{% elif lesson.lesson_type == 'quiz' %}Test{% else %}Video{% endif %}</span>
         {% if lesson.duration_seconds %}<span class="dot"></span><span>{{ lesson.duration_seconds|lesson_time }}</span>{% endif %}
         {% if lesson.is_preview %}<span class="dot"></span><span class="badge badge-amber">Tanishtiruv</span>{% endif %}
       </div>
