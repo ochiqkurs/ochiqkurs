@@ -363,7 +363,7 @@ URL path segments use Uzbek words where possible: `malaka` (skill/course), `qidi
 ### Home Page
 - **Authenticated users**: "Davom ettirish" section (up to 3 in-progress courses with progress bars), recent activity, "Sizga yoqishi mumkin" recommendations, featured learning paths section.
 - **Anonymous users**: Pro hero with a Telegram-style hero card stack on the right, a pill-search field, and a trust strip of stats.
-- Then: featured learning paths (if any), trust strip, category grid, **Featured** row, "Why us" feature row, **Trending** row, one row per category (top 6 categories × 6 courses each), **Newest** row, testimonials, and a final CTA banner.
+- Then: featured learning paths (if any), trust strip (four plain sentences), category grid ("Sohalar"), **Featured** row, **Trending** row, one row per category (top 6 categories × 6 courses each), **Newest** row, testimonials, and — for anonymous users only — a single-button signup CTA banner. The "Why us" icon-card row was removed (it duplicated the trust strip and is a stock AI-template pattern).
 - Global announcements render as amber banners at the top of the page when present.
 
 ---
