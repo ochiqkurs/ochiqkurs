@@ -934,31 +934,8 @@ form p label { font-weight: 600; font-size: .9rem; display: block; margin-bottom
   color: var(--brand-700); font-weight: 600; font-size: .92rem; text-decoration: none;
   display: inline-flex; align-items: center; gap: 4px;
 }
-.section-link:hover { gap: 8px; color: var(--brand-800); }
+.section-link:hover { color: var(--brand-800); }
 
-.feature-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-}
-.feature {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 28px;
-  transition: transform var(--t-base), box-shadow var(--t-base);
-}
-.feature:hover { box-shadow: var(--shadow-md); }
-.feature .f-icon {
-  width: 54px; height: 54px;
-  display: grid; place-items: center;
-  background: var(--brand-50);
-  color: var(--brand-700);
-  border-radius: var(--r-md);
-  margin-bottom: 16px;
-}
-.feature h3 { font-size: 1.1rem; margin-bottom: 8px; }
-.feature p { color: var(--text-soft); font-size: .92rem; margin: 0; }
 
 .category-grid {
   display: grid;
@@ -2333,9 +2310,6 @@ details[open] > .module-summary::before { transform: rotate(45deg); }
   line-height: 1.06;
   margin: 14px 0 18px;
 }
-.hero-pro-title .accent {
-  color: var(--brand-600);
-}
 .hero-pro-sub {
   font-size: 1.1rem;
   color: var(--text-soft);
@@ -3287,7 +3261,6 @@ html[data-theme="dark"] .qa-instructor { color: var(--brand-300); }
 .path-card-body p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; }
 .path-card-meta { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); }
 .path-card-action { margin-top: 16px; }
-.path-card-icon { color: var(--brand-500); margin-bottom: 12px; }
 
 /* Path detail */
 .path-detail-page { max-width: 900px; margin: 0 auto; padding-bottom: 48px; }
